@@ -4,6 +4,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../core/responsive/responsive_centered_view.dart';
+import '../../../../core/design_system/color_schemes.dart';
 import '../../../transaction/domain/entities/transaction.dart';
 import '../../domain/entities/custom_category.dart';
 import '../cubit/category_cubit.dart';
@@ -134,7 +135,7 @@ class _AddEditCategoryScreenState extends State<AddEditCategoryScreen> {
                         width: 40.0.w,
                         height: 40.0.h,
                         decoration: BoxDecoration(
-                          color: Color(int.parse('0xFF$hex')),
+                          color: FinoraColorSchemes.parseHexColor(hex),
                           shape: BoxShape.circle,
                           border: isSelected
                               ? Border.all(

@@ -635,4 +635,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get btnDecreaseBudget => 'Decrease Amount';
+
+  @override
+  String get overviewTab => 'Overview';
+
+  @override
+  String get transactionsTab => 'Transactions';
+
+  @override
+  String get analyticsTab => 'Analytics';
 }

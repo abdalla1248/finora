@@ -1291,6 +1291,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Decrease Amount'**
   String get btnDecreaseBudget;
+
+  /// No description provided for @overviewTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get overviewTab;
+
+  /// No description provided for @transactionsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions'**
+  String get transactionsTab;
+
+  /// No description provided for @analyticsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics'**
+  String get analyticsTab;
 }
 
 class _AppLocalizationsDelegate

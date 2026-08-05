@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/account/presentation/cubit/account_cubit.dart';
 import '../../features/account/presentation/screens/account_management_screen.dart';
 import '../../features/account/presentation/screens/add_edit_account_screen.dart';
+import '../../features/account/presentation/screens/account_details_screen.dart';
 import '../../features/analytics/presentation/screens/analytics_screen.dart';
 import '../../features/app_initialization/presentation/screens/splash_screen.dart';
 import '../../features/backup/presentation/screens/backup_export_screen.dart';
@@ -43,6 +44,7 @@ class AppRouter {
   static const String accounts = '/accounts';
   static const String addAccount = '/accounts/add';
   static const String editAccount = '/accounts/edit/:id';
+  static const String accountDetails = '/accounts/details/:id';
   static const String categories = '/categories';
   static const String addCategory = '/categories/add';
   static const String editCategory = '/categories/edit/:id';
@@ -208,6 +210,17 @@ class AppRouter {
             child: AddEditAccountScreen(
               initialAccount: matches.isNotEmpty ? matches.first : null,
             ),
+          );
+        },
+      ),
+      GoRoute(
+        path: accountDetails,
+        pageBuilder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return _buildPageWithTransition(
+            context: context,
+            state: state,
+            child: AccountDetailsScreen(accountId: id),
           );
         },
       ),

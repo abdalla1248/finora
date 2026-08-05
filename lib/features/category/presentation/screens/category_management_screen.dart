@@ -6,6 +6,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/loading_indicator.dart';
 import '../../../../core/responsive/responsive_centered_view.dart';
+import '../../../../core/design_system/color_schemes.dart';
 import '../../../transaction/domain/entities/transaction.dart';
 import '../../domain/entities/custom_category.dart';
 import '../cubit/category_cubit.dart';
@@ -103,7 +104,7 @@ class _CategoryList extends StatelessWidget {
           child: ListTile(
             leading: CircleAvatar(
               radius: 20.0.r,
-              backgroundColor: Color(int.parse('0xFF${cat.colorHex}')),
+              backgroundColor: FinoraColorSchemes.parseHexColor(cat.colorHex),
               child: Icon(Icons.label, color: Colors.white, size: 20.0.r),
             ),
             title: Text(

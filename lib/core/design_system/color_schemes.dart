@@ -3,6 +3,17 @@ import 'package:flutter/material.dart';
 class FinoraColorSchemes {
   const FinoraColorSchemes._();
 
+  static Color parseHexColor(String hexColor) {
+    String hex = hexColor.replaceAll('#', '');
+    if (hex.startsWith('0x') || hex.startsWith('0X')) {
+      hex = hex.substring(2);
+    }
+    if (hex.length == 6) {
+      hex = 'FF$hex';
+    }
+    return Color(int.parse(hex, radix: 16));
+  }
+
   static const Color primaryBlue = Color(0xFF1A5F7A);
   static const Color backgroundLight = Color(0xFFF8FAFC);
   static const Color backgroundDark = Color(0xFF0F172A);

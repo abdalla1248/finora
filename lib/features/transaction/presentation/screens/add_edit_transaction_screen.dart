@@ -105,9 +105,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
             nameKey: c.name,
             type: c.type,
             icon: Icons.category_outlined,
-            color: Color(
-              int.parse(c.colorHex.replaceFirst('#', '0xFF')),
-            ),
+            color: FinoraColorSchemes.parseHexColor(c.colorHex),
           ),
         )
         .toList();
@@ -243,9 +241,6 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                       border: const OutlineInputBorder(),
                     ),
                     validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return l10n.titleRequiredError;
-                      }
                       return null;
                     },
                   ),
@@ -349,11 +344,19 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                               finalNote = '$finalNote TargetAccount:$_selectedTargetAccountId'.trim();
                             }
 
+                            final categoryName = allCategories.firstWhere(
+                              (c) => c.id == _selectedCategoryId,
+                              orElse: () => allCategories.first,
+                            ).getLocalizedName(l10n);
+                            final title = _titleController.text.trim().isEmpty
+                                ? categoryName
+                                : _titleController.text.trim();
+
                             final transaction = Transaction(
                               id:
                                   widget.initialTransaction?.id ??
                                   now.millisecondsSinceEpoch.toString(),
-                              title: _titleController.text.trim(),
+                              title: title,
                               amount: amount,
                               transactionType: _selectedType,
                               categoryId: _selectedCategoryId,

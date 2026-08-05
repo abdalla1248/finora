@@ -112,7 +112,7 @@ class AccountManagementScreen extends StatelessWidget {
                               ).colorScheme.tertiaryContainer,
                             )
                           : null,
-                      onTap: () => context.push('/accounts/edit/${account.id}'),
+                      onTap: () => context.push('/accounts/details/${account.id}'),
                     ),
                   );
                 },

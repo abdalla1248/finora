@@ -210,5 +210,8 @@
   "duplicateBudgetMessage": "هناك ميزانية مخصصة بالفعل لهذه الفئة. ماذا تفضل أن تفعل؟",
   "btnUpdateBudget": "استبدال المبلغ",
   "btnIncreaseBudget": "زيادة الميزانية",
-  "btnDecreaseBudget": "تقليل الميزانية"
+  "btnDecreaseBudget": "تقليل الميزانية",
+  "overviewTab": "نظرة عامة",
+  "transactionsTab": "المعاملات",
+  "analyticsTab": "التحليلات"
 }

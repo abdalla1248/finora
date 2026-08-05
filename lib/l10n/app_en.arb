@@ -238,5 +238,8 @@
   "duplicateBudgetMessage": "A budget already exists for the selected category. What would you like to do?",
   "btnUpdateBudget": "Replace Amount",
   "btnIncreaseBudget": "Increase Amount",
-  "btnDecreaseBudget": "Decrease Amount"
+  "btnDecreaseBudget": "Decrease Amount",
+  "overviewTab": "Overview",
+  "transactionsTab": "Transactions",
+  "analyticsTab": "Analytics"
 }

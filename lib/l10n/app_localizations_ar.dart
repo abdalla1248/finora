@@ -634,4 +634,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get btnDecreaseBudget => 'تقليل الميزانية';
+
+  @override
+  String get overviewTab => 'نظرة عامة';
+
+  @override
+  String get transactionsTab => 'المعاملات';
+
+  @override
+  String get analyticsTab => 'التحليلات';
 }
