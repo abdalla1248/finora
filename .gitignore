@@ -1,0 +1,67 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# IntelliJ project files
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# VS Code project files
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Flutter / Dart specific
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+
+# Symbol files
+*.g.dart
+*.freezed.dart
+
+# Hive generated files / local databases
+*.hive
+*.lock
+
+# Environment / Secret files
+.env
+.env.*
+secrets.json
+google-services.json
+GoogleService-Info.plist
+
+# Coverage reporting
+coverage/
+*.lcov
+
+# Android specific
+android/app/debug
+android/app/release
+android/key.jks
+android/local.properties
+
+# iOS specific
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/app.flx
+ios/Pods/
+ios/Runner.xcworkspace/

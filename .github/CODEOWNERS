@@ -1,0 +1,15 @@
+# Global Code Owners
+*                       @finora-org/core-architects @finora-org/lead-devs
+
+# Architecture & Engineering Specifications
+/docs/                  @finora-org/core-architects
+/docs/Architecture.md   @finora-org/core-architects
+/docs/AI_RULES.md       @finora-org/core-architects
+
+# GitHub Configurations & CI/CD
+/.github/               @finora-org/devops
+/.github/workflows/     @finora-org/devops
+
+# Core Infrastructure & Design System
+/lib/src/core/          @finora-org/core-architects
+/assets/                @finora-org/ui-ux-leads
