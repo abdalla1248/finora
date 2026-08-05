@@ -241,5 +241,13 @@
   "btnDecreaseBudget": "Decrease Amount",
   "overviewTab": "Overview",
   "transactionsTab": "Transactions",
-  "analyticsTab": "Analytics"
+  "analyticsTab": "Analytics",
+  "goalStatusToday": "Today",
+  "goalStatusTomorrow": "Tomorrow",
+  "goalStatusDaysLeft": "{days} days left",
+  "goalStatusExpired": "Expired",
+  "goalStatusCompleted": "Completed",
+  "savedAmountLabel": "Saved: {amount}",
+  "targetLabel": "Target: {amount}",
+  "markAsCompleted": "Mark Completed"
 }

@@ -20,6 +20,13 @@ class AccountCubit extends Cubit<AccountState> {
 
   Future<void> addAccount(Account account) async {
     emit(state.copyWith(isLoading: true));
+    if (account.isDefault) {
+      for (final a in state.accounts) {
+        if (a.id != account.id && a.isDefault) {
+          await _accountRepository.saveAccount(a.copyWith(isDefault: false));
+        }
+      }
+    }
     final result = await _accountRepository.saveAccount(account);
     result.fold(
       (failure) =>

@@ -643,4 +643,34 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get analyticsTab => 'التحليلات';
+
+  @override
+  String get goalStatusToday => 'اليوم';
+
+  @override
+  String get goalStatusTomorrow => 'غداً';
+
+  @override
+  String goalStatusDaysLeft(Object days) {
+    return 'متبقي $days أيام';
+  }
+
+  @override
+  String get goalStatusExpired => 'منتهي الصلاحية';
+
+  @override
+  String get goalStatusCompleted => 'مكتمل';
+
+  @override
+  String savedAmountLabel(Object amount) {
+    return 'المدخر: $amount';
+  }
+
+  @override
+  String targetLabel(Object amount) {
+    return 'المستهدف: $amount';
+  }
+
+  @override
+  String get markAsCompleted => 'تحديد كمكتمل';
 }

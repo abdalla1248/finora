@@ -55,7 +55,7 @@ class _AddEditGoalScreenState extends State<AddEditGoalScreen> {
     final picked = await showDatePicker(
       context: context,
       initialDate: _deadline,
-      firstDate: DateTime.now(),
+      firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
     if (picked != null) {
@@ -63,6 +63,37 @@ class _AddEditGoalScreenState extends State<AddEditGoalScreen> {
         _deadline = picked;
       });
     }
+  }
+
+  void _showDeleteDialog(BuildContext context, AppLocalizations l10n) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete Savings Goal'),
+        content: const Text('Are you sure you want to delete this savings goal? This action cannot be undone.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(l10n.cancelButton),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(dialogContext).pop();
+              await context.read<SavingsGoalCubit>().deleteGoal(
+                widget.initialGoal!.id,
+              );
+              if (context.mounted) {
+                context.pop();
+              }
+            },
+            child: Text(
+              l10n.deleteButton,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -73,6 +104,13 @@ class _AddEditGoalScreenState extends State<AddEditGoalScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? l10n.editGoalTitle : l10n.addGoalTitle),
+        actions: [
+          if (isEditing)
+            IconButton(
+              icon: const Icon(Icons.delete_outline),
+              onPressed: () => _showDeleteDialog(context, l10n),
+            ),
+        ],
       ),
       body: ResponsiveCenteredView(
         child: SingleChildScrollView(

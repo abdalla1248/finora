@@ -213,5 +213,13 @@
   "btnDecreaseBudget": "تقليل الميزانية",
   "overviewTab": "نظرة عامة",
   "transactionsTab": "المعاملات",
-  "analyticsTab": "التحليلات"
+  "analyticsTab": "التحليلات",
+  "goalStatusToday": "اليوم",
+  "goalStatusTomorrow": "غداً",
+  "goalStatusDaysLeft": "متبقي {days} أيام",
+  "goalStatusExpired": "منتهي الصلاحية",
+  "goalStatusCompleted": "مكتمل",
+  "savedAmountLabel": "المدخر: {amount}",
+  "targetLabel": "المستهدف: {amount}",
+  "markAsCompleted": "تحديد كمكتمل"
 }

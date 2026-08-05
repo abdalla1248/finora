@@ -644,4 +644,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get analyticsTab => 'Analytics';
+
+  @override
+  String get goalStatusToday => 'Today';
+
+  @override
+  String get goalStatusTomorrow => 'Tomorrow';
+
+  @override
+  String goalStatusDaysLeft(Object days) {
+    return '$days days left';
+  }
+
+  @override
+  String get goalStatusExpired => 'Expired';
+
+  @override
+  String get goalStatusCompleted => 'Completed';
+
+  @override
+  String savedAmountLabel(Object amount) {
+    return 'Saved: $amount';
+  }
+
+  @override
+  String targetLabel(Object amount) {
+    return 'Target: $amount';
+  }
+
+  @override
+  String get markAsCompleted => 'Mark Completed';
 }

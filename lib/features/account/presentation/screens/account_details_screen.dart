@@ -12,6 +12,8 @@ import '../../../transaction/presentation/cubit/transaction_cubit.dart';
 import '../../../transaction/presentation/cubit/transaction_state.dart';
 import '../../../transaction/presentation/widgets/transaction_card.dart';
 import '../../../transaction/domain/entities/category.dart';
+import '../../domain/entities/account.dart';
+import '../../../../core/design_system/color_schemes.dart';
 import '../cubit/account_cubit.dart';
 import '../cubit/account_state.dart';
 
@@ -23,6 +25,39 @@ class AccountDetailsScreen extends StatelessWidget {
   String? _extractTargetAccountFromNote(String note) {
     final match = RegExp(r'TargetAccount:([^\s]+)').firstMatch(note);
     return match?.group(1);
+  }
+
+  IconData _getIcon(String? iconName, AccountType type) {
+    if (iconName != null) {
+      switch (iconName) {
+        case 'wallet':
+          return Icons.account_balance_wallet;
+        case 'savings':
+          return Icons.savings_outlined;
+        case 'bank':
+          return Icons.account_balance;
+        case 'cash':
+          return Icons.money;
+        case 'card':
+          return Icons.credit_card;
+        case 'investment':
+          return Icons.trending_up;
+      }
+    }
+    switch (type) {
+      case AccountType.cash:
+        return Icons.money;
+      case AccountType.bank:
+        return Icons.account_balance;
+      case AccountType.savings:
+        return Icons.savings;
+      case AccountType.creditCard:
+        return Icons.credit_card;
+      case AccountType.wallet:
+        return Icons.account_balance_wallet;
+      case AccountType.business:
+        return Icons.business;
+    }
   }
 
   @override
@@ -120,6 +155,7 @@ class AccountDetailsScreen extends StatelessWidget {
                       // Analytics Tab
                       _buildAnalyticsTab(
                         context,
+                        account,
                         accountTransactions,
                         totalIncome,
                         totalExpense,
@@ -147,15 +183,29 @@ class AccountDetailsScreen extends StatelessWidget {
     AppLocalizations l10n,
   ) {
     final currency = account.currencyCode;
+    final accountColor = account.colorHex != null
+        ? FinoraColorSchemes.parseHexColor(account.colorHex!)
+        : Theme.of(context).colorScheme.primary;
+
     return ListView(
       padding: EdgeInsets.all(16.0.r),
       children: [
         Card(
-          color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.1),
+          color: accountColor.withValues(alpha: 0.1),
           child: Padding(
             padding: EdgeInsets.all(20.0.r),
             child: Column(
               children: [
+                CircleAvatar(
+                  radius: 28.0.r,
+                  backgroundColor: accountColor.withValues(alpha: 0.15),
+                  child: Icon(
+                    _getIcon(account.iconData, account.type),
+                    color: accountColor,
+                    size: 28.0.r,
+                  ),
+                ),
+                SizedBox(height: 12.0.h),
                 Text(
                   'Current Balance',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -169,7 +219,7 @@ class AccountDetailsScreen extends StatelessWidget {
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         fontSize: 32.0.sp,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: accountColor,
                       ),
                 ),
               ],
@@ -321,6 +371,7 @@ class AccountDetailsScreen extends StatelessWidget {
 
   Widget _buildAnalyticsTab(
     BuildContext context,
+    Account account,
     List<Transaction> transactions,
     double totalIncome,
     double totalExpense,
@@ -333,6 +384,32 @@ class AccountDetailsScreen extends StatelessWidget {
         icon: Icons.analytics_outlined,
       );
     }
+
+    // Calculations for the new stats
+    final now = DateTime.now();
+    final monthlySpending = transactions.where((t) {
+      final isSource = t.accountId == accountId;
+      final isExpense = t.transactionType == TransactionType.expense ||
+          t.transactionType == TransactionType.transfer;
+      final isThisMonth = t.transactionDate.year == now.year &&
+          t.transactionDate.month == now.month;
+      return isSource && isExpense && isThisMonth;
+    }).fold(0.0, (sum, t) => sum + t.amount);
+
+    final totalExpensesAllTime = transactions.where((t) {
+      final isSource = t.accountId == accountId;
+      final isExpense = t.transactionType == TransactionType.expense ||
+          t.transactionType == TransactionType.transfer;
+      return isSource && isExpense;
+    }).fold(0.0, (sum, t) => sum + t.amount);
+
+    final activeDays = now.difference(account.createdAt).inDays;
+    final days = activeDays <= 0 ? 1 : activeDays;
+    final averageDailySpending = totalExpensesAllTime / days;
+
+    final largestTx = transactions.isEmpty
+        ? null
+        : transactions.reduce((a, b) => a.amount > b.amount ? a : b);
 
     // Group expenses by category
     final categoryTotals = <String, double>{};
@@ -357,6 +434,89 @@ class AccountDetailsScreen extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.all(16.0.r),
       children: [
+        // Stats grid
+        Row(
+          children: [
+            Expanded(
+              child: Card(
+                child: Padding(
+                  padding: EdgeInsets.all(12.0.r),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Monthly Spend',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 11.0.sp),
+                      ),
+                      SizedBox(height: 4.0.h),
+                      Text(
+                        '${account.currencyCode} ${monthlySpending.toStringAsFixed(2)}',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14.0.sp,
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: 8.0.w),
+            Expanded(
+              child: Card(
+                child: Padding(
+                  padding: EdgeInsets.all(12.0.r),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Daily Avg Spend',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 11.0.sp),
+                      ),
+                      SizedBox(height: 4.0.h),
+                      Text(
+                        '${account.currencyCode} ${averageDailySpending.toStringAsFixed(2)}',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14.0.sp,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: 8.0.w),
+            Expanded(
+              child: Card(
+                child: Padding(
+                  padding: EdgeInsets.all(12.0.r),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Largest Tx',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 11.0.sp),
+                      ),
+                      SizedBox(height: 4.0.h),
+                      Text(
+                        largestTx != null
+                            ? '${largestTx.currencyCode} ${largestTx.amount.toStringAsFixed(2)}'
+                            : 'N/A',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14.0.sp,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 16.0.h),
         // Income vs Expense Ratio Card
         Card(
           child: Padding(

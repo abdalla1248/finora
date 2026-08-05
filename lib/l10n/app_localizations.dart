@@ -1309,6 +1309,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Analytics'**
   String get analyticsTab;
+
+  /// No description provided for @goalStatusToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get goalStatusToday;
+
+  /// No description provided for @goalStatusTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get goalStatusTomorrow;
+
+  /// No description provided for @goalStatusDaysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days left'**
+  String goalStatusDaysLeft(Object days);
+
+  /// No description provided for @goalStatusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get goalStatusExpired;
+
+  /// No description provided for @goalStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get goalStatusCompleted;
+
+  /// No description provided for @savedAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved: {amount}'**
+  String savedAmountLabel(Object amount);
+
+  /// No description provided for @targetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Target: {amount}'**
+  String targetLabel(Object amount);
+
+  /// No description provided for @markAsCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Completed'**
+  String get markAsCompleted;
 }
 
 class _AppLocalizationsDelegate

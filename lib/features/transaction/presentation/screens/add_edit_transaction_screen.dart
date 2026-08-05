@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../core/design_system/color_schemes.dart';
 import '../../../../core/responsive/responsive_centered_view.dart';
+import '../../../account/domain/entities/account.dart';
 import '../../../account/presentation/cubit/account_cubit.dart';
 import '../../../account/presentation/cubit/account_state.dart';
 import '../../../category/presentation/cubit/category_cubit.dart';
@@ -63,6 +64,39 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
   String? _extractTargetAccountFromNote(String note) {
     final match = RegExp(r'TargetAccount:([^\s]+)').firstMatch(note);
     return match?.group(1);
+  }
+
+  IconData _getAccountIcon(String? iconName, AccountType type) {
+    if (iconName != null) {
+      switch (iconName) {
+        case 'wallet':
+          return Icons.account_balance_wallet;
+        case 'savings':
+          return Icons.savings_outlined;
+        case 'bank':
+          return Icons.account_balance;
+        case 'cash':
+          return Icons.money;
+        case 'card':
+          return Icons.credit_card;
+        case 'investment':
+          return Icons.trending_up;
+      }
+    }
+    switch (type) {
+      case AccountType.cash:
+        return Icons.money;
+      case AccountType.bank:
+        return Icons.account_balance;
+      case AccountType.savings:
+        return Icons.savings;
+      case AccountType.creditCard:
+        return Icons.credit_card;
+      case AccountType.wallet:
+        return Icons.account_balance_wallet;
+      case AccountType.business:
+        return Icons.business;
+    }
   }
 
   @override
@@ -187,9 +221,22 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                       border: const OutlineInputBorder(),
                     ),
                     items: accounts.map((account) {
+                      final color = account.colorHex != null
+                          ? FinoraColorSchemes.parseHexColor(account.colorHex!)
+                          : Theme.of(context).colorScheme.primary;
                       return DropdownMenuItem<String>(
                         value: account.id,
-                        child: Text('${account.name} (${account.currencyCode} ${account.balance.toStringAsFixed(2)})'),
+                        child: Row(
+                          children: [
+                            Icon(
+                              _getAccountIcon(account.iconData, account.type),
+                              color: color,
+                              size: 20.0.r,
+                            ),
+                            SizedBox(width: 8.0.w),
+                            Text('${account.name} (${account.currencyCode} ${account.balance.toStringAsFixed(2)})'),
+                          ],
+                        ),
                       );
                     }).toList(),
                     onChanged: (val) {
@@ -217,9 +264,22 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                       items: accounts
                           .where((a) => a.id != _selectedAccountId)
                           .map((account) {
+                        final color = account.colorHex != null
+                            ? FinoraColorSchemes.parseHexColor(account.colorHex!)
+                            : Theme.of(context).colorScheme.primary;
                         return DropdownMenuItem<String>(
                           value: account.id,
-                          child: Text('${account.name} (${account.currencyCode} ${account.balance.toStringAsFixed(2)})'),
+                          child: Row(
+                            children: [
+                              Icon(
+                                _getAccountIcon(account.iconData, account.type),
+                                color: color,
+                                size: 20.0.r,
+                              ),
+                              SizedBox(width: 8.0.w),
+                              Text('${account.name} (${account.currencyCode} ${account.balance.toStringAsFixed(2)})'),
+                            ],
+                          ),
                         );
                       }).toList(),
                       onChanged: (val) {

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../core/responsive/responsive_centered_view.dart';
+import '../../../../core/design_system/color_schemes.dart';
 import '../../../user/presentation/cubit/user_cubit.dart';
 import '../../../user/presentation/cubit/user_state.dart';
 import '../../domain/entities/account.dart';
@@ -23,6 +24,29 @@ class _AddEditAccountScreenState extends State<AddEditAccountScreen> {
   late final TextEditingController _nameController;
   late final TextEditingController _balanceController;
   late AccountType _selectedType;
+  late String _selectedIconName;
+  late String _selectedColorHex;
+  late bool _isDefault;
+
+  static const List<String> _colorOptions = [
+    '1E88E5', // Blue
+    '43A047', // Green
+    'E53935', // Red
+    'FB8C00', // Orange
+    '8E24AA', // Purple
+    '00ACC1', // Cyan
+    'FDD835', // Yellow
+    '3949AB', // Indigo
+  ];
+
+  static const Map<String, IconData> _iconOptions = {
+    'wallet': Icons.account_balance_wallet,
+    'savings': Icons.savings_outlined,
+    'bank': Icons.account_balance,
+    'cash': Icons.money,
+    'card': Icons.credit_card,
+    'investment': Icons.trending_up,
+  };
 
   @override
   void initState() {
@@ -33,6 +57,9 @@ class _AddEditAccountScreenState extends State<AddEditAccountScreen> {
       text: a != null ? a.balance.toString() : '0.00',
     );
     _selectedType = a?.type ?? AccountType.cash;
+    _selectedIconName = a?.iconData ?? 'wallet';
+    _selectedColorHex = a?.colorHex ?? _colorOptions.first;
+    _isDefault = a?.isDefault ?? false;
   }
 
   @override
@@ -120,7 +147,99 @@ class _AddEditAccountScreenState extends State<AddEditAccountScreen> {
                     }
                   },
                 ),
-                SizedBox(height: 32.0.h),
+                SizedBox(height: 24.0.h),
+
+                // Icon Picker Section
+                Text(
+                  'Account Icon',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 14.0.sp),
+                ),
+                SizedBox(height: 8.0.h),
+                Wrap(
+                  spacing: 12.0.w,
+                  runSpacing: 12.0.h,
+                  children: _iconOptions.entries.map((entry) {
+                    final isSelected = _selectedIconName == entry.key;
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedIconName = entry.key;
+                        });
+                      },
+                      child: CircleAvatar(
+                        radius: 24.0.r,
+                        backgroundColor: isSelected
+                            ? Theme.of(context).colorScheme.primaryContainer
+                            : Theme.of(context).colorScheme.surfaceContainerHighest,
+                        child: Icon(
+                          entry.value,
+                          color: isSelected
+                              ? Theme.of(context).colorScheme.onPrimaryContainer
+                              : Theme.of(context).colorScheme.onSurfaceVariant,
+                          size: 24.0.r,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 24.0.h),
+
+                // Color Picker Section
+                Text(
+                  l10n.colorLabel,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 14.0.sp),
+                ),
+                SizedBox(height: 8.0.h),
+                Wrap(
+                  spacing: 12.0.w,
+                  runSpacing: 12.0.h,
+                  children: _colorOptions.map((hex) {
+                    final isSelected = _selectedColorHex == hex;
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedColorHex = hex;
+                        });
+                      },
+                      child: Container(
+                        width: 40.0.w,
+                        height: 40.0.h,
+                        decoration: BoxDecoration(
+                          color: FinoraColorSchemes.parseHexColor(hex),
+                          shape: BoxShape.circle,
+                          border: isSelected
+                              ? Border.all(
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                  width: 3.0.r,
+                                )
+                              : null,
+                        ),
+                        child: isSelected
+                            ? Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 20.0.r,
+                              )
+                            : null,
+                      ),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 16.0.h),
+
+                // Default Switch
+                SwitchListTile(
+                  title: const Text('Default Account'),
+                  subtitle: const Text('Use this account as the default for new transactions'),
+                  value: _isDefault,
+                  onChanged: (val) {
+                    setState(() {
+                      _isDefault = val;
+                    });
+                  },
+                ),
+                SizedBox(height: 24.0.h),
+
                 BlocBuilder<UserCubit, UserState>(
                   builder: (context, userState) {
                     final currency =
@@ -144,9 +263,11 @@ class _AddEditAccountScreenState extends State<AddEditAccountScreen> {
                             type: _selectedType,
                             balance: balance,
                             currencyCode: currency,
+                            colorHex: _selectedColorHex,
+                            iconData: _selectedIconName,
                             createdAt: widget.initialAccount?.createdAt ?? now,
                             updatedAt: now,
-                            isDefault: widget.initialAccount?.isDefault ?? false,
+                            isDefault: _isDefault,
                           );
 
                           await context.read<AccountCubit>().addAccount(account);

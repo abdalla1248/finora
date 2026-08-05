@@ -7,6 +7,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/widgets/error_state.dart';
 import '../../../../core/design_system/color_schemes.dart';
 import '../../../../core/responsive/responsive_centered_view.dart';
+import '../../../account/domain/entities/account.dart';
 import '../../../account/presentation/cubit/account_cubit.dart';
 import '../../../account/presentation/cubit/account_state.dart';
 import '../../domain/entities/category.dart';
@@ -27,6 +28,39 @@ class TransactionDetailsScreen extends StatelessWidget {
 
   String _cleanNote(String note) {
     return note.replaceAll(RegExp(r'TargetAccount:[^\s]+'), '').trim();
+  }
+
+  IconData _getAccountIcon(String? iconName, AccountType type) {
+    if (iconName != null) {
+      switch (iconName) {
+        case 'wallet':
+          return Icons.account_balance_wallet;
+        case 'savings':
+          return Icons.savings_outlined;
+        case 'bank':
+          return Icons.account_balance;
+        case 'cash':
+          return Icons.money;
+        case 'card':
+          return Icons.credit_card;
+        case 'investment':
+          return Icons.trending_up;
+      }
+    }
+    switch (type) {
+      case AccountType.cash:
+        return Icons.money;
+      case AccountType.bank:
+        return Icons.account_balance;
+      case AccountType.savings:
+        return Icons.savings;
+      case AccountType.creditCard:
+        return Icons.credit_card;
+      case AccountType.wallet:
+        return Icons.account_balance_wallet;
+      case AccountType.business:
+        return Icons.business;
+    }
   }
 
   @override
@@ -66,12 +100,18 @@ class TransactionDetailsScreen extends StatelessWidget {
             // Fetch accounts
             final sourceAccount = accountState.accounts.where((a) => a.id == tx.accountId).firstOrNull;
             final sourceAccountName = sourceAccount?.name ?? tx.accountId;
+            final sourceAccountColor = sourceAccount?.colorHex != null
+                ? FinoraColorSchemes.parseHexColor(sourceAccount!.colorHex!)
+                : Theme.of(context).colorScheme.primary;
 
             final targetAccountId = _extractTargetAccountFromNote(tx.note);
             final targetAccount = targetAccountId != null
                 ? accountState.accounts.where((a) => a.id == targetAccountId).firstOrNull
                 : null;
             final targetAccountName = targetAccount?.name ?? targetAccountId ?? '';
+            final targetAccountColor = targetAccount?.colorHex != null
+                ? FinoraColorSchemes.parseHexColor(targetAccount!.colorHex!)
+                : Theme.of(context).colorScheme.primary;
 
             final cleanedNote = _cleanNote(tx.note);
             final showLastUpdated = tx.updatedAt.difference(tx.createdAt).inSeconds.abs() > 1;
@@ -159,12 +199,20 @@ class TransactionDetailsScreen extends StatelessWidget {
 
                     if (isTransfer) ...[
                       ListTile(
-                        leading: const Icon(Icons.arrow_outward, color: Colors.red),
+                        leading: CircleAvatar(
+                          radius: 16.0.r,
+                          backgroundColor: sourceAccountColor.withValues(alpha: 0.15),
+                          child: Icon(
+                            _getAccountIcon(sourceAccount?.iconData, sourceAccount?.type ?? AccountType.cash),
+                            color: sourceAccountColor,
+                            size: 16.0.r,
+                          ),
+                        ),
                         title: const Text('From Account'),
                         subtitle: Text(
                           sourceAccountName,
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
+                            color: sourceAccountColor,
                             fontWeight: FontWeight.bold,
                             decoration: TextDecoration.underline,
                           ),
@@ -176,12 +224,20 @@ class TransactionDetailsScreen extends StatelessWidget {
                       const Divider(height: 1.0),
                       if (targetAccountId != null) ...[
                         ListTile(
-                          leading: const Icon(Icons.subdirectory_arrow_right, color: Colors.green),
+                          leading: CircleAvatar(
+                            radius: 16.0.r,
+                            backgroundColor: targetAccountColor.withValues(alpha: 0.15),
+                            child: Icon(
+                              _getAccountIcon(targetAccount?.iconData, targetAccount?.type ?? AccountType.cash),
+                              color: targetAccountColor,
+                              size: 16.0.r,
+                            ),
+                          ),
                           title: const Text('To Account'),
                           subtitle: Text(
                             targetAccountName,
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
+                              color: targetAccountColor,
                               fontWeight: FontWeight.bold,
                               decoration: TextDecoration.underline,
                             ),
@@ -194,12 +250,20 @@ class TransactionDetailsScreen extends StatelessWidget {
                       ],
                     ] else ...[
                       ListTile(
-                        leading: const Icon(Icons.account_balance_wallet),
+                        leading: CircleAvatar(
+                          radius: 16.0.r,
+                          backgroundColor: sourceAccountColor.withValues(alpha: 0.15),
+                          child: Icon(
+                            _getAccountIcon(sourceAccount?.iconData, sourceAccount?.type ?? AccountType.cash),
+                            color: sourceAccountColor,
+                            size: 16.0.r,
+                          ),
+                        ),
                         title: const Text('Financial Account'),
                         subtitle: Text(
                           sourceAccountName,
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
+                            color: sourceAccountColor,
                             fontWeight: FontWeight.bold,
                             decoration: TextDecoration.underline,
                           ),

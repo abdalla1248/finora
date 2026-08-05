@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/widgets/empty_state.dart';
 import '../../../../core/responsive/responsive_centered_view.dart';
+import '../../../../core/design_system/color_schemes.dart';
 import '../../domain/entities/account.dart';
 import '../cubit/account_cubit.dart';
 import '../cubit/account_state.dart';
@@ -12,7 +13,23 @@ import '../cubit/account_state.dart';
 class AccountManagementScreen extends StatelessWidget {
   const AccountManagementScreen({super.key});
 
-  IconData _iconForType(AccountType type) {
+  IconData _getIcon(String? iconName, AccountType type) {
+    if (iconName != null) {
+      switch (iconName) {
+        case 'wallet':
+          return Icons.account_balance_wallet;
+        case 'savings':
+          return Icons.savings_outlined;
+        case 'bank':
+          return Icons.account_balance;
+        case 'cash':
+          return Icons.money;
+        case 'card':
+          return Icons.credit_card;
+        case 'investment':
+          return Icons.trending_up;
+      }
+    }
     switch (type) {
       case AccountType.cash:
         return Icons.money;
@@ -73,17 +90,19 @@ class AccountManagementScreen extends StatelessWidget {
                 itemCount: state.accounts.length,
                 itemBuilder: (context, index) {
                   final account = state.accounts[index];
+                  final accountColor = account.colorHex != null
+                      ? FinoraColorSchemes.parseHexColor(account.colorHex!)
+                      : Theme.of(context).colorScheme.primary;
+
                   return Card(
                     margin: EdgeInsets.only(bottom: 12.0.h),
                     child: ListTile(
                       leading: CircleAvatar(
                         radius: 20.0.r,
-                        backgroundColor: Theme.of(
-                          context,
-                        ).colorScheme.primaryContainer,
+                        backgroundColor: accountColor.withValues(alpha: 0.15),
                         child: Icon(
-                          _iconForType(account.type),
-                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                          _getIcon(account.iconData, account.type),
+                          color: accountColor,
                           size: 20.0.r,
                         ),
                       ),
