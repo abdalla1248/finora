@@ -1,12 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
-import '../../../dashboard/presentation/screens/dashboard_screen.dart';
-import '../../../budget/presentation/screens/budget_screen.dart';
-import '../../../analytics/presentation/screens/analytics_screen.dart';
-import '../../../settings/presentation/screens/settings_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
 import '../../../../l10n/app_localizations.dart';
+import '../../../analytics/presentation/screens/analytics_screen.dart';
+import '../../../budget/presentation/screens/budget_screen.dart';
+import '../../../dashboard/presentation/screens/dashboard_screen.dart';
+import '../../../settings/presentation/screens/settings_screen.dart';
 
 class HomeShell extends StatefulWidget {
   final StatefulNavigationShell navigationShell;
@@ -38,8 +39,11 @@ class _HomeShellState extends State<HomeShell> {
   @override
   void didUpdateWidget(HomeShell oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.navigationShell.currentIndex != oldWidget.navigationShell.currentIndex) {
-      if (_pageController.hasClients && _pageController.page?.round() != widget.navigationShell.currentIndex) {
+    if (widget.navigationShell.currentIndex !=
+        oldWidget.navigationShell.currentIndex) {
+      if (_pageController.hasClients &&
+          _pageController.page?.round() !=
+              widget.navigationShell.currentIndex) {
         _pageController.animateToPage(
           widget.navigationShell.currentIndex,
           duration: const Duration(milliseconds: 300),
@@ -57,10 +61,7 @@ class _HomeShellState extends State<HomeShell> {
 
   void _onPageChanged(int index) {
     if (index != widget.navigationShell.currentIndex) {
-      widget.navigationShell.goBranch(
-        index,
-        initialLocation: false,
-      );
+      widget.navigationShell.goBranch(index, initialLocation: false);
     }
   }
 
@@ -99,10 +100,7 @@ class _HomeShellState extends State<HomeShell> {
         },
         items: [
           CurvedNavigationBarItem(
-            child: Icon(
-              Icons.dashboard,
-              color: theme.colorScheme.onSurface,
-            ),
+            child: Icon(Icons.dashboard, color: theme.colorScheme.onSurface),
             label: l10n.appTitle,
             labelStyle: theme.textTheme.labelSmall?.copyWith(
               color: theme.colorScheme.onSurface,
@@ -110,10 +108,7 @@ class _HomeShellState extends State<HomeShell> {
             ),
           ),
           CurvedNavigationBarItem(
-            child: Icon(
-              Icons.pie_chart,
-              color: theme.colorScheme.onSurface,
-            ),
+            child: Icon(Icons.pie_chart, color: theme.colorScheme.onSurface),
             label: l10n.budgetsTitle,
             labelStyle: theme.textTheme.labelSmall?.copyWith(
               color: theme.colorScheme.onSurface,
@@ -121,10 +116,7 @@ class _HomeShellState extends State<HomeShell> {
             ),
           ),
           CurvedNavigationBarItem(
-            child: Icon(
-              Icons.trending_up,
-              color: theme.colorScheme.onSurface,
-            ),
+            child: Icon(Icons.trending_up, color: theme.colorScheme.onSurface),
             label: l10n.analyticsTitle,
             labelStyle: theme.textTheme.labelSmall?.copyWith(
               color: theme.colorScheme.onSurface,
@@ -132,10 +124,7 @@ class _HomeShellState extends State<HomeShell> {
             ),
           ),
           CurvedNavigationBarItem(
-            child: Icon(
-              Icons.settings,
-              color: theme.colorScheme.onSurface,
-            ),
+            child: Icon(Icons.settings, color: theme.colorScheme.onSurface),
             label: l10n.settingsTitle,
             labelStyle: theme.textTheme.labelSmall?.copyWith(
               color: theme.colorScheme.onSurface,

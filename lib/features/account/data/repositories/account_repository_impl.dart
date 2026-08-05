@@ -32,7 +32,10 @@ class AccountRepositoryImpl implements AccountRepository {
         models = [defaultAccount];
       }
       final entities = models.map((m) => m.toEntity()).toList();
-      return Right(entities);
+      final defaultAccounts = entities.where((a) => a.isDefault).toList();
+      final nonDefaultAccounts = entities.where((a) => !a.isDefault).toList();
+      final sortedEntities = [...defaultAccounts, ...nonDefaultAccounts];
+      return Right(sortedEntities);
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(e.message));
     } catch (e) {

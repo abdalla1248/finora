@@ -66,7 +66,6 @@ class TransactionDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final txColors = Theme.of(context).extension<TransactionColors>();
 
     return BlocBuilder<AccountCubit, AccountState>(
       builder: (context, accountState) {
@@ -92,10 +91,10 @@ class TransactionDetailsScreen extends StatelessWidget {
 
             final amountPrefix = isIncome ? '+' : (isExpense ? '-' : '');
             final amountColor = isIncome
-                ? (txColors?.income ?? FinoraColorSchemes.incomeGreen)
+                ? context.semanticColors.income
                 : (isExpense
-                    ? Theme.of(context).colorScheme.error
-                    : Theme.of(context).colorScheme.primary);
+                    ? context.semanticColors.expense
+                    : context.semanticColors.transfer);
 
             // Fetch accounts
             final sourceAccount = accountState.accounts.where((a) => a.id == tx.accountId).firstOrNull;

@@ -674,4 +674,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get markAsCompleted => 'Mark Completed';
+
+  @override
+  String get tutorialAccountsTitle => 'Financial Accounts';
+
+  @override
+  String get tutorialAccountsDesc =>
+      'Every transaction belongs to a Financial Account (like cash or bank). We have seeded a default \'Main Cash\' account for you. You can add new accounts, edit them, or select them from the Settings tab.';
+
+  @override
+  String get deleteAccountErrorHasTransactions =>
+      'Cannot delete account because it still contains transactions. Please delete or reassign those transactions first.';
+
+  @override
+  String get okButton => 'OK';
 }

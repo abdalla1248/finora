@@ -1,14 +1,13 @@
 import 'dart:io';
 
-import 'package:finora/core/design_system/color_schemes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../l10n/app_localizations.dart';
 import '../../../../core/responsive/responsive_centered_view.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../user/domain/entities/user.dart';
 import '../../../user/presentation/cubit/user_cubit.dart';
 import '../../../user/presentation/cubit/user_state.dart';
@@ -312,7 +311,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _SectionHeader(title: l10n.accountProfile),
                 SizedBox(height: 8.0.h),
                 Card(
-                  color: FinoraColorSchemes.backgroundDark.withAlpha(180),
+                  color: Theme.of(context).colorScheme.surfaceContainer,
                   child: BlocBuilder<UserCubit, UserState>(
                     builder: (context, state) {
                       if (state is UserLoaded && state.user != null) {
@@ -389,7 +388,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium
-                                          ?.copyWith(fontWeight: FontWeight.bold, fontSize: 14.0.sp),
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14.0.sp,
+                                          ),
                                     ),
                                     SizedBox(width: 4.0.w),
                                     Icon(Icons.chevron_right, size: 20.0.r),
@@ -405,13 +407,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
-                                      user.preferredLanguage.toLowerCase() == 'ar'
+                                      user.preferredLanguage.toLowerCase() ==
+                                              'ar'
                                           ? 'العربية'
                                           : 'English',
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium
-                                          ?.copyWith(fontWeight: FontWeight.bold, fontSize: 14.0.sp),
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14.0.sp,
+                                          ),
                                     ),
                                     SizedBox(width: 4.0.w),
                                     Icon(Icons.chevron_right, size: 20.0.r),
@@ -433,7 +439,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium
-                                          ?.copyWith(fontWeight: FontWeight.bold, fontSize: 14.0.sp),
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14.0.sp,
+                                          ),
                                     ),
                                     SizedBox(width: 4.0.w),
                                     Icon(Icons.chevron_right, size: 20.0.r),
@@ -460,7 +469,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium
-                                          ?.copyWith(fontWeight: FontWeight.bold, fontSize: 14.0.sp),
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14.0.sp,
+                                          ),
                                     ),
                                     SizedBox(width: 4.0.w),
                                     Icon(Icons.chevron_right, size: 20.0.r),
@@ -492,7 +504,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _SectionHeader(title: l10n.managementSectionTitle),
                 SizedBox(height: 8.0.h),
                 Card(
-                  color: FinoraColorSchemes.backgroundDark.withAlpha(180),
+                  color: Theme.of(context).colorScheme.surfaceContainer,
                   child: Column(
                     children: [
                       if (_matchesSearch(l10n.accountsTitle))
@@ -503,7 +515,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           onTap: () => context.push('/accounts'),
                         ),
                       if (_matchesSearch(l10n.categoriesTitle)) ...[
-                        const Divider(height: 1.0),
                         ListTile(
                           leading: const Icon(Icons.category),
                           title: Text(l10n.categoriesTitle),
@@ -512,7 +523,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                       ],
                       if (_matchesSearch(l10n.backupExportTitle)) ...[
-                        const Divider(height: 1.0),
                         ListTile(
                           leading: const Icon(Icons.backup),
                           title: Text(l10n.backupExportTitle),
@@ -533,7 +543,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _SectionHeader(title: l10n.aboutTitle),
                 SizedBox(height: 8.0.h),
                 Card(
-                  color: FinoraColorSchemes.backgroundDark.withAlpha(180),
+                  color: Theme.of(context).colorScheme.surfaceContainer,
                   child: Column(
                     children: [
                       ListTile(
@@ -541,7 +551,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         title: Text(l10n.appTitle),
                         subtitle: Text(l10n.versionLabel),
                       ),
-                      const Divider(height: 1.0),
+
                       ListTile(
                         leading: const Icon(Icons.description_outlined),
                         title: Text(l10n.licensesLabel),
@@ -554,7 +564,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           );
                         },
                       ),
-                      const Divider(height: 1.0),
                       ListTile(
                         leading: const Icon(Icons.privacy_tip_outlined),
                         title: Text(l10n.privacyPolicyLabel),
@@ -582,7 +591,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   icon: const Icon(Icons.delete_forever),
                   label: Text(l10n.resetDataButton),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.errorContainer,
+                    backgroundColor: Theme.of(
+                      context,
+                    ).colorScheme.errorContainer,
                     foregroundColor: Theme.of(
                       context,
                     ).colorScheme.onErrorContainer,
@@ -606,9 +617,10 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: Theme.of(
-        context,
-      ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 16.0.sp),
+      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+        fontWeight: FontWeight.bold,
+        fontSize: 16.0.sp,
+      ),
     );
   }
 }

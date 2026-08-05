@@ -1357,6 +1357,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mark Completed'**
   String get markAsCompleted;
+
+  /// No description provided for @tutorialAccountsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial Accounts'**
+  String get tutorialAccountsTitle;
+
+  /// No description provided for @tutorialAccountsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Every transaction belongs to a Financial Account (like cash or bank). We have seeded a default \'Main Cash\' account for you. You can add new accounts, edit them, or select them from the Settings tab.'**
+  String get tutorialAccountsDesc;
+
+  /// No description provided for @deleteAccountErrorHasTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot delete account because it still contains transactions. Please delete or reassign those transactions first.'**
+  String get deleteAccountErrorHasTransactions;
+
+  /// No description provided for @okButton.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get okButton;
 }
 
 class _AppLocalizationsDelegate

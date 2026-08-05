@@ -9,6 +9,8 @@ import '../../../../core/design_system/color_schemes.dart';
 import '../../domain/entities/account.dart';
 import '../cubit/account_cubit.dart';
 import '../cubit/account_state.dart';
+import '../../../transaction/domain/entities/transaction.dart';
+import '../../../transaction/presentation/cubit/transaction_cubit.dart';
 
 class AccountManagementScreen extends StatelessWidget {
   const AccountManagementScreen({super.key});
@@ -44,6 +46,68 @@ class AccountManagementScreen extends StatelessWidget {
       case AccountType.business:
         return Icons.business;
     }
+  }
+
+  Future<bool?> _showDeleteConfirmDialog(BuildContext context, Account account) async {
+    final l10n = AppLocalizations.of(context);
+    final txState = context.read<TransactionCubit>().state;
+    
+    final hasTransactions = txState.allTransactions.any((tx) => 
+        tx.accountId == account.id || 
+        (tx.transactionType == TransactionType.transfer && tx.note.contains('TargetAccount:${account.id}'))
+    );
+    
+    if (hasTransactions) {
+      await showDialog<void>(
+        context: context,
+        builder: (dialogContext) {
+          return AlertDialog(
+            title: Text(l10n.deleteAccountTitle),
+            content: Text(l10n.deleteAccountErrorHasTransactions),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: Text(l10n.okButton),
+              ),
+            ],
+          );
+        },
+      );
+      return false;
+    }
+    
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text(l10n.deleteAccountTitle),
+          content: Text(l10n.deleteAccountConfirm),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: Text(l10n.cancelButton),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.error,
+                foregroundColor: Theme.of(context).colorScheme.onError,
+              ),
+              child: Text(l10n.deleteButton),
+            ),
+          ],
+        );
+      },
+    );
+    
+    if (confirm == true) {
+      if (context.mounted) {
+        await context.read<AccountCubit>().deleteAccount(account.id);
+      }
+      return true;
+    }
+    
+    return false;
   }
 
   @override
@@ -94,44 +158,61 @@ class AccountManagementScreen extends StatelessWidget {
                       ? FinoraColorSchemes.parseHexColor(account.colorHex!)
                       : Theme.of(context).colorScheme.primary;
 
-                  return Card(
-                    margin: EdgeInsets.only(bottom: 12.0.h),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        radius: 20.0.r,
-                        backgroundColor: accountColor.withValues(alpha: 0.15),
-                        child: Icon(
-                          _getIcon(account.iconData, account.type),
-                          color: accountColor,
-                          size: 20.0.r,
-                        ),
+                  return Dismissible(
+                    key: Key(account.id),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      alignment: AlignmentDirectional.centerEnd,
+                      padding: EdgeInsets.symmetric(horizontal: 20.0.w),
+                      margin: EdgeInsets.only(bottom: 12.0.h),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.error,
+                        borderRadius: BorderRadius.circular(12.0.r),
                       ),
-                      title: Text(
-                        account.name,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0.sp,
+                      child: const Icon(Icons.delete, color: Colors.white),
+                    ),
+                    confirmDismiss: (direction) async {
+                      return await _showDeleteConfirmDialog(context, account);
+                    },
+                    child: Card(
+                      margin: EdgeInsets.only(bottom: 12.0.h),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          radius: 20.0.r,
+                          backgroundColor: accountColor.withValues(alpha: 0.15),
+                          child: Icon(
+                            _getIcon(account.iconData, account.type),
+                            color: accountColor,
+                            size: 20.0.r,
+                          ),
                         ),
-                      ),
-                      subtitle: Text(
-                        '${account.currencyCode} ${account.balance.toStringAsFixed(2)}',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
-                          fontSize: 14.0.sp,
+                        title: Text(
+                          account.name,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0.sp,
+                          ),
                         ),
+                        subtitle: Text(
+                          '${account.currencyCode} ${account.balance.toStringAsFixed(2)}',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.outline,
+                            fontSize: 14.0.sp,
+                          ),
+                        ),
+                        trailing: account.isDefault
+                            ? Chip(
+                                label: Text(
+                                  l10n.defaultLabel,
+                                  style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 10.0.sp),
+                                ),
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.tertiaryContainer,
+                              )
+                            : null,
+                        onTap: () => context.push('/accounts/details/${account.id}'),
                       ),
-                      trailing: account.isDefault
-                          ? Chip(
-                              label: Text(
-                                l10n.defaultLabel,
-                                style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 10.0.sp),
-                              ),
-                              backgroundColor: Theme.of(
-                                context,
-                              ).colorScheme.tertiaryContainer,
-                            )
-                          : null,
-                      onTap: () => context.push('/accounts/details/${account.id}'),
                     ),
                   );
                 },

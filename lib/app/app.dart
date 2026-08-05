@@ -51,12 +51,12 @@ class FinoraApp extends StatelessWidget {
     return ThemeMode.system;
   }
 
-  ThemeData _buildTheme(ColorScheme colorScheme, TransactionColors transactionColors) {
+  ThemeData _buildTheme(ColorScheme colorScheme, AppSemanticColors semanticColors) {
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
       textTheme: FinoraTypography.textTheme,
-      extensions: [transactionColors],
+      extensions: [semanticColors],
       scaffoldBackgroundColor: colorScheme.surface,
       appBarTheme: AppBarTheme(
         centerTitle: true,
@@ -204,8 +204,8 @@ class FinoraApp extends StatelessWidget {
                   },
 
                   // Theme settings
-                  theme: _buildTheme(FinoraColorSchemes.light, TransactionColors.light),
-                  darkTheme: _buildTheme(FinoraColorSchemes.dark, TransactionColors.dark),
+                  theme: _buildTheme(FinoraColorSchemes.light, AppSemanticColors.light),
+                  darkTheme: _buildTheme(FinoraColorSchemes.dark, AppSemanticColors.dark),
                   themeMode: _mapThemeMode(userState),
                   locale: _mapLocale(userState),
 

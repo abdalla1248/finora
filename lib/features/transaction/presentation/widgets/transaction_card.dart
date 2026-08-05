@@ -15,14 +15,12 @@ class TransactionCard extends StatelessWidget {
     final category = CategoryRegistry.getCategoryById(transaction.categoryId);
     final isExpense = transaction.transactionType == TransactionType.expense;
     final isIncome = transaction.transactionType == TransactionType.income;
-    final txColors = Theme.of(context).extension<TransactionColors>();
-
     final amountPrefix = isIncome ? '+' : (isExpense ? '-' : '');
     final amountColor = isIncome
-        ? (txColors?.income ?? FinoraColorSchemes.incomeGreen)
+        ? context.semanticColors.income
         : (isExpense
-              ? Theme.of(context).colorScheme.error
-              : Theme.of(context).colorScheme.primary);
+              ? context.semanticColors.expense
+              : context.semanticColors.transfer);
 
     final dateFormatted = DateFormat.yMMMd().format(
       transaction.transactionDate,

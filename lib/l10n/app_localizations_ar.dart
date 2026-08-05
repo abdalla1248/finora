@@ -673,4 +673,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get markAsCompleted => 'تحديد كمكتمل';
+
+  @override
+  String get tutorialAccountsTitle => 'الحسابات المالية';
+
+  @override
+  String get tutorialAccountsDesc =>
+      'كل معاملة تنتمي إلى حساب مالي (مثل النقدية أو البنك). لقد أنشأنا لك حساباً افتراضياً باسم \'النقدية الرئيسية\'. يمكنك إضافة حسابات جديدة، تعديلها، أو إدارتها من علامة تبويب الإعدادات.';
+
+  @override
+  String get deleteAccountErrorHasTransactions =>
+      'لا يمكن حذف هذا الحساب لأنه يحتوي على معاملات. يرجى حذف تلك المعاملات أو إعادة تعيينها أولاً.';
+
+  @override
+  String get okButton => 'موافق';
 }

@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 class IncomeExpenseBarChart extends StatelessWidget {
   final double totalIncome;
@@ -20,7 +21,7 @@ class IncomeExpenseBarChart extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: EdgeInsets.all(20.0.r),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -30,9 +31,9 @@ class IncomeExpenseBarChart extends StatelessWidget {
                 context,
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20.0),
+            SizedBox(height: 15.0.h),
             SizedBox(
-              height: 180,
+              height: 160.h,
               child: BarChart(
                 BarChartData(
                   maxY: maxY,
@@ -54,17 +55,17 @@ class IncomeExpenseBarChart extends StatelessWidget {
                         getTitlesWidget: (double value, TitleMeta meta) {
                           switch (value.toInt()) {
                             case 0:
-                              return const Padding(
-                                padding: EdgeInsets.only(top: 8.0),
-                                child: Text(
+                              return Padding(
+                                padding: EdgeInsets.only(top: 3.0.h),
+                                child: const Text(
                                   'Income',
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                               );
                             case 1:
-                              return const Padding(
-                                padding: EdgeInsets.only(top: 8.0),
-                                child: Text(
+                              return Padding(
+                                padding: EdgeInsets.only(top: 3.0.h),
+                                child: const Text(
                                   'Expense',
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
@@ -96,7 +97,7 @@ class IncomeExpenseBarChart extends StatelessWidget {
                         BarChartRodData(
                           toY: totalExpense,
                           color: Theme.of(context).colorScheme.error,
-                          width: 32,
+                          width: 26.w,
                           borderRadius: BorderRadius.circular(6),
                         ),
                       ],

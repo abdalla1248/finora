@@ -125,9 +125,8 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isEditing = widget.initialTransaction != null;
-    final txColors = Theme.of(context).extension<TransactionColors>();
-    final incomeColor = txColors?.income ?? FinoraColorSchemes.incomeGreen;
-    final expenseColor = txColors?.expense ?? Theme.of(context).colorScheme.error;
+    final incomeColor = context.semanticColors.income;
+    final expenseColor = context.semanticColors.expense;
 
     final builtInCategories = CategoryRegistry.getCategoriesForType(_selectedType);
     final customCategoriesState = context.watch<CategoryCubit>().state;
@@ -213,6 +212,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
 
                   // Account Selector
                   DropdownButtonFormField<String>(
+                    isExpanded: true,
                     initialValue: _selectedAccountId,
                     decoration: InputDecoration(
                       labelText: _selectedType == TransactionType.transfer
@@ -234,7 +234,12 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                               size: 20.0.r,
                             ),
                             SizedBox(width: 8.0.w),
-                            Text('${account.name} (${account.currencyCode} ${account.balance.toStringAsFixed(2)})'),
+                            Expanded(
+                              child: Text(
+                                '${account.name} (${account.currencyCode} ${account.balance.toStringAsFixed(2)})',
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
                           ],
                         ),
                       );
@@ -256,6 +261,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                   // Target Account Selector for Transfer
                   if (_selectedType == TransactionType.transfer) ...[
                     DropdownButtonFormField<String>(
+                      isExpanded: true,
                       initialValue: _selectedTargetAccountId,
                       decoration: InputDecoration(
                         labelText: l10n.targetAccountLabel,
@@ -277,7 +283,12 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                                 size: 20.0.r,
                               ),
                               SizedBox(width: 8.0.w),
-                              Text('${account.name} (${account.currencyCode} ${account.balance.toStringAsFixed(2)})'),
+                              Expanded(
+                                child: Text(
+                                  '${account.name} (${account.currencyCode} ${account.balance.toStringAsFixed(2)})',
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
                             ],
                           ),
                         );

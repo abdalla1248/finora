@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finora/core/design_system/color_schemes.dart';
 import 'package:finora/features/transaction/domain/entities/transaction.dart';
 import 'package:finora/features/transaction/presentation/widgets/transaction_card.dart';
 
@@ -23,6 +24,9 @@ void main() {
   ) async {
     await tester.pumpWidget(
       MaterialApp(
+        theme: ThemeData(
+          extensions: const [AppSemanticColors.light],
+        ),
         home: Scaffold(body: TransactionCard(transaction: tTransaction)),
       ),
     );

@@ -9,7 +9,9 @@ import '../../../../core/responsive/responsive_breakpoints.dart';
 import '../../../../core/responsive/responsive_centered_view.dart';
 import '../../../../core/tutorial/domain/entities/tutorial_step.dart';
 import '../../../../core/tutorial/presentation/cubit/tutorial_cubit.dart';
+import '../../../account/domain/entities/account.dart';
 import '../../../account/presentation/cubit/account_cubit.dart';
+import '../../../account/presentation/cubit/account_state.dart';
 import '../../../budget/presentation/cubit/budget_cubit.dart';
 import '../../../budget/presentation/cubit/budget_state.dart';
 import '../../../budget/presentation/widgets/budget_progress_card.dart';
@@ -29,6 +31,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   final GlobalKey _welcomeHeaderKey = GlobalKey();
+  final GlobalKey _accountsSectionKey = GlobalKey();
   final GlobalKey _netBalanceKey = GlobalKey();
   final GlobalKey _fabKey = GlobalKey();
 
@@ -45,6 +48,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
             targetKey: _welcomeHeaderKey,
             title: l10n.tutorialWelcomeTitle,
             description: l10n.tutorialWelcomeDesc,
+          ),
+          TutorialStep(
+            targetKey: _accountsSectionKey,
+            title: l10n.tutorialAccountsTitle,
+            description: l10n.tutorialAccountsDesc,
           ),
           TutorialStep(
             targetKey: _netBalanceKey,
@@ -64,8 +72,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final txColors = Theme.of(context).extension<TransactionColors>();
-    final incomeColor = txColors?.income ?? FinoraColorSchemes.incomeGreen;
+    final incomeColor = context.semanticColors.income;
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.appTitle)),
@@ -85,6 +92,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: BlocBuilder<TransactionCubit, TransactionState>(
               builder: (context, txState) {
                 final transactions = txState.allTransactions;
+                final recentTransactions = List<Transaction>.from(transactions)
+                  ..sort((a, b) => b.transactionDate.compareTo(a.transactionDate));
 
                 // Calculate Monthly Stats
                 final now = DateTime.now();
@@ -185,7 +194,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 title: l10n.totalExpenseLabel,
                                 amount:
                                     '$currency ${totalExpense.toStringAsFixed(2)}',
-                                color: Theme.of(context).colorScheme.error,
+                                color: context.semanticColors.expense,
                                 icon: Icons.arrow_upward,
                               ),
                             ),
@@ -198,7 +207,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           amount: '$currency ${netBalance.toStringAsFixed(2)}',
                           color: netBalance >= 0
                               ? incomeColor
-                              : Theme.of(context).colorScheme.error,
+                              : context.semanticColors.expense,
                           icon: Icons.account_balance_wallet,
                         ),
                       ] else ...[
@@ -219,7 +228,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 title: l10n.totalExpenseLabel,
                                 amount:
                                     '$currency ${totalExpense.toStringAsFixed(2)}',
-                                color: Theme.of(context).colorScheme.error,
+                                color: context.semanticColors.expense,
                                 icon: Icons.arrow_upward,
                               ),
                             ),
@@ -231,7 +240,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     '$currency ${netBalance.toStringAsFixed(2)}',
                                 color: netBalance >= 0
                                     ? incomeColor
-                                    : Theme.of(context).colorScheme.error,
+                                    : context.semanticColors.expense,
                                 icon: Icons.account_balance_wallet,
                               ),
                             ),
@@ -239,6 +248,114 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                       ],
                       const SizedBox(height: 24.0),
+
+                      // Accounts Section
+                      BlocBuilder<AccountCubit, AccountState>(
+                        builder: (context, accountState) {
+                          final accounts = accountState.accounts;
+                          if (accounts.isEmpty) return const SizedBox.shrink();
+                          return Column(
+                            key: _accountsSectionKey,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    l10n.accountsTitle,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      context.push('/accounts');
+                                    },
+                                    child: Text(l10n.viewAllButton),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8.0),
+                              SizedBox(
+                                height: 85.0,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: accounts.length,
+                                  itemBuilder: (context, index) {
+                                    final account = accounts[index];
+                                    final color = account.colorHex != null
+                                        ? FinoraColorSchemes.parseHexColor(account.colorHex!)
+                                        : Theme.of(context).colorScheme.primary;
+                                    return Card(
+                                      margin: const EdgeInsetsDirectional.only(end: 12.0),
+                                      child: InkWell(
+                                        onTap: () => context.push('/accounts/details/${account.id}'),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              CircleAvatar(
+                                                radius: 18.0,
+                                                backgroundColor: color.withValues(alpha: 0.15),
+                                                child: Icon(
+                                                  _getAccountIcon(account.iconData, account.type),
+                                                  color: color,
+                                                  size: 18.0,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 12.0),
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Row(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Text(
+                                                        account.name,
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .titleSmall
+                                                            ?.copyWith(fontWeight: FontWeight.bold),
+                                                      ),
+                                                      if (account.isDefault) ...[
+                                                        const SizedBox(width: 4.0),
+                                                        Icon(
+                                                          Icons.star,
+                                                          size: 12.0,
+                                                          color: Theme.of(context).colorScheme.tertiary,
+                                                        ),
+                                                      ],
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 4.0),
+                                                  Text(
+                                                    '${account.currencyCode} ${account.balance.toStringAsFixed(2)}',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall
+                                                        ?.copyWith(
+                                                          color: Theme.of(context).colorScheme.outline,
+                                                        ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                              const SizedBox(height: 24.0),
+                            ],
+                          );
+                        },
+                      ),
 
                       // Budget Preview Section
                       BlocBuilder<BudgetCubit, BudgetState>(
@@ -316,7 +433,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                         ),
                       ] else ...[
-                        ...transactions
+                        ...recentTransactions
                             .take(5)
                             .map(
                               (tx) => TransactionCard(
@@ -345,6 +462,39 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
   }
+
+  IconData _getAccountIcon(String? iconName, AccountType type) {
+    if (iconName != null) {
+      switch (iconName) {
+        case 'wallet':
+          return Icons.account_balance_wallet;
+        case 'savings':
+          return Icons.savings_outlined;
+        case 'bank':
+          return Icons.account_balance;
+        case 'cash':
+          return Icons.money;
+        case 'card':
+          return Icons.credit_card;
+        case 'investment':
+          return Icons.trending_up;
+      }
+    }
+    switch (type) {
+      case AccountType.cash:
+        return Icons.money;
+      case AccountType.bank:
+        return Icons.account_balance;
+      case AccountType.savings:
+        return Icons.savings;
+      case AccountType.creditCard:
+        return Icons.credit_card;
+      case AccountType.wallet:
+        return Icons.account_balance_wallet;
+      case AccountType.business:
+        return Icons.business;
+    }
+  }
 }
 
 class _StatCard extends StatelessWidget {
@@ -364,6 +514,7 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: context.semanticColors.dashboardCard,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
