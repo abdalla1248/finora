@@ -11,6 +11,7 @@ import '../cubit/account_cubit.dart';
 import '../cubit/account_state.dart';
 import '../../../transaction/domain/entities/transaction.dart';
 import '../../../transaction/presentation/cubit/transaction_cubit.dart';
+import '../../../../core/utils/currency_formatter.dart';
 
 class AccountManagementScreen extends StatelessWidget {
   const AccountManagementScreen({super.key});
@@ -194,7 +195,7 @@ class AccountManagementScreen extends StatelessWidget {
                           ),
                         ),
                         subtitle: Text(
-                          '${account.currencyCode} ${account.balance.toStringAsFixed(2)}',
+                          formatCurrency(account.balance, account.currencyCode, context),
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: Theme.of(context).colorScheme.outline,
                             fontSize: 14.0.sp,

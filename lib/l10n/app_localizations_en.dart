@@ -547,7 +547,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statusCritical => 'Critical (90%+)';
 
   @override
-  String get statusExceeded => 'Exceeded (100%+)';
+  String get statusExceeded => 'Exceeded';
 
   @override
   String spentLabel(String amount) {
@@ -688,4 +688,175 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get okButton => 'OK';
+
+  @override
+  String get accountIconLabel => 'Account Icon';
+
+  @override
+  String get defaultAccountLabel => 'Default Account';
+
+  @override
+  String get defaultAccountDesc =>
+      'Use this account as the default for new transactions';
+
+  @override
+  String get accountTypeCash => 'Cash';
+
+  @override
+  String get accountTypeBank => 'Bank';
+
+  @override
+  String get accountTypeSavings => 'Savings';
+
+  @override
+  String get accountTypeCreditCard => 'Credit Card';
+
+  @override
+  String get accountTypeWallet => 'Digital Wallet';
+
+  @override
+  String get accountTypeBusiness => 'Business';
+
+  @override
+  String get budgetTypeDaily => 'Daily Budget';
+
+  @override
+  String get budgetTypeWeekly => 'Weekly Budget';
+
+  @override
+  String get budgetTypeMonthly => 'Monthly Budget';
+
+  @override
+  String get budgetTypeYearly => 'Yearly Budget';
+
+  @override
+  String get currentBalanceLabel => 'Current Balance';
+
+  @override
+  String get incomeLabel => 'Income';
+
+  @override
+  String get expensesLabel => 'Expenses';
+
+  @override
+  String get netCashFlowLabel => 'Net Cash Flow';
+
+  @override
+  String get totalTransactionsLabel => 'Total Transactions';
+
+  @override
+  String get creationDateLabel => 'Creation Date';
+
+  @override
+  String get lastActivityLabel => 'Last Activity';
+
+  @override
+  String get monthlySpendLabel => 'Monthly Spend';
+
+  @override
+  String get dailyAvgSpendLabel => 'Daily Avg Spend';
+
+  @override
+  String get largestTxLabel => 'Largest Tx';
+
+  @override
+  String get cashFlowBreakdownLabel => 'Cash Flow Breakdown';
+
+  @override
+  String get expensesByCategoryLabel => 'Expenses by Category';
+
+  @override
+  String get noExpenseRecordsLabel =>
+      'No expense records found for this account.';
+
+  @override
+  String get accountDetailsTitle => 'Account Details';
+
+  @override
+  String get accountNotFoundError => 'Account not found';
+
+  @override
+  String get budgetTypeCustom => 'Custom Budget';
+
+  @override
+  String get notificationsTitle => 'Notification Settings';
+
+  @override
+  String get notificationsDesc =>
+      'Manage reminder frequency, budget alerts, and spending reports';
+
+  @override
+  String get budgetNotificationsTitle => 'Budget Alerts';
+
+  @override
+  String get budgetNotificationsDesc =>
+      'Notify when budget reaches 50%, 80%, 100%, or is exceeded';
+
+  @override
+  String get goalNotificationsTitle => 'Savings Goal Alerts';
+
+  @override
+  String get goalNotificationsDesc =>
+      'Notify when goal is reached, expiring, or deadline arrives';
+
+  @override
+  String get reminderNotificationsTitle => 'Transaction Reminders';
+
+  @override
+  String get reminderNotificationsDesc =>
+      'Scheduled alerts to log daily/weekly expenses';
+
+  @override
+  String get weeklySummaryTitle => 'Weekly Summary';
+
+  @override
+  String get weeklySummaryDesc => 'Receive a weekly overview of your spending';
+
+  @override
+  String get monthlySummaryTitle => 'Monthly Summary';
+
+  @override
+  String get monthlySummaryDesc => 'Receive a monthly financial report';
+
+  @override
+  String get reminderFrequencyTitle => 'Reminder Frequency';
+
+  @override
+  String get reminderTimeTitle => 'Reminder Time';
+
+  @override
+  String get testNotificationButton => 'Send Test Notification';
+
+  @override
+  String get testNotificationSent => 'Test notification sent successfully!';
+
+  @override
+  String get permissionStatusTitle => 'Notification Permission';
+
+  @override
+  String get permissionGranted => 'Granted';
+
+  @override
+  String get permissionDenied => 'Denied (Tap to request)';
+
+  @override
+  String get requestPermissionButton => 'Grant Permission';
+
+  @override
+  String get statusCompleted => 'Completed';
+
+  @override
+  String get statusExpired => 'Expired';
+
+  @override
+  String get freqDaily => 'Every Day';
+
+  @override
+  String get freqWeekly => 'Every Week';
+
+  @override
+  String get freqBiWeekly => 'Every 2 Weeks';
+
+  @override
+  String get freqMonthly => 'Every Month';
 }

@@ -1,6 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import '../../../transaction/domain/entities/category.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../../../core/utils/currency_formatter.dart';
 
 class CategoryPieChart extends StatefulWidget {
   final Map<String, double> categoryExpenses;
@@ -38,7 +40,7 @@ class _CategoryPieChartState extends State<CategoryPieChart> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Expenses by Category',
+              AppLocalizations.of(context).expensesByCategoryLabel,
               style: Theme.of(
                 context,
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -114,7 +116,7 @@ class _CategoryPieChartState extends State<CategoryPieChart> {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      '${category.id}: ${widget.currency} ${entry.value.toStringAsFixed(2)}',
+                      '${category.getLocalizedName(AppLocalizations.of(context))}: ${formatCurrency(entry.value, widget.currency, context)}',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ],

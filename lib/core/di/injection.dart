@@ -33,6 +33,7 @@ import '../../features/user/presentation/cubit/user_cubit.dart';
 
 import '../tutorial/data/datasources/tutorial_local_data_source.dart';
 import '../tutorial/presentation/cubit/tutorial_cubit.dart';
+import '../../features/notification/data/services/notification_service.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -116,6 +117,10 @@ class DIContainer {
     );
 
     // 10. Services
+    getIt.registerLazySingleton<NotificationService>(
+      () => NotificationService(),
+    );
+
     getIt.registerLazySingleton<BackupService>(
       () => BackupService(getIt<StorageService>()),
     );

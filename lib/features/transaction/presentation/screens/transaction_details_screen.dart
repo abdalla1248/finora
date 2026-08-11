@@ -15,6 +15,7 @@ import '../../domain/entities/transaction.dart';
 import '../cubit/transaction_cubit.dart';
 import '../cubit/transaction_state.dart';
 import '../widgets/delete_transaction_dialog.dart';
+import '../../../../core/utils/currency_formatter.dart';
 
 class TransactionDetailsScreen extends StatelessWidget {
   final String transactionId;
@@ -168,7 +169,7 @@ class TransactionDetailsScreen extends StatelessWidget {
                             ),
                             SizedBox(height: 8.0.h),
                             Text(
-                              '$amountPrefix${tx.currencyCode} ${tx.amount.toStringAsFixed(2)}',
+                              '$amountPrefix${formatCurrency(tx.amount, tx.currencyCode, context)}',
                               style: Theme.of(context).textTheme.headlineMedium
                                   ?.copyWith(
                                     fontWeight: FontWeight.bold,

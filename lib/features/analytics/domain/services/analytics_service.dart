@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../transaction/domain/entities/category.dart';
 import '../../../transaction/domain/entities/transaction.dart';
 import '../models/analytics_insight.dart';
+import '../../../../core/utils/currency_formatter.dart';
 
 class AnalyticsService {
   const AnalyticsService();
@@ -66,7 +67,7 @@ class AnalyticsService {
           id: 'highest_spending_category',
           titleKey: 'insightHighestCategoryTitle',
           value:
-              '${cat.id} ($currency ${highestCategoryEntry.value.toStringAsFixed(2)})',
+              '${cat.id} (${formatCurrency(highestCategoryEntry.value, currency)})',
           descriptionKey: 'insightHighestCategoryDesc',
           icon: cat.icon,
           color: cat.color,
@@ -85,7 +86,7 @@ class AnalyticsService {
           id: 'largest_expense',
           titleKey: 'insightLargestExpenseTitle',
           value:
-              '${maxExpense.title} ($currency ${maxExpense.amount.toStringAsFixed(2)})',
+              '${maxExpense.title} (${formatCurrency(maxExpense.amount, currency)})',
           descriptionKey: 'insightLargestExpenseDesc',
           icon: Icons.arrow_downward,
           color: const Color(0xFFEF4444),
@@ -104,7 +105,7 @@ class AnalyticsService {
           id: 'largest_income',
           titleKey: 'insightLargestIncomeTitle',
           value:
-              '${maxIncome.title} ($currency ${maxIncome.amount.toStringAsFixed(2)})',
+              '${maxIncome.title} (${formatCurrency(maxIncome.amount, currency)})',
           descriptionKey: 'insightLargestIncomeDesc',
           icon: Icons.arrow_upward,
           color: const Color(0xFF10B981),
@@ -143,7 +144,7 @@ class AnalyticsService {
         AnalyticsInsight(
           id: 'avg_daily_spending',
           titleKey: 'insightAvgDailyTitle',
-          value: '$currency ${avgDaily.toStringAsFixed(2)}',
+          value: formatCurrency(avgDaily, currency),
           descriptionKey: 'insightAvgDailyDesc',
           icon: Icons.calendar_today,
           color: const Color(0xFF8B5CF6),

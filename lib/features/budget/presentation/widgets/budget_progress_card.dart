@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+
+import '../../../../core/utils/currency_formatter.dart';
+import '../../../../core/utils/l10n_extensions.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../transaction/domain/entities/category.dart';
 import '../../../transaction/domain/entities/transaction.dart';
@@ -86,7 +89,11 @@ class BudgetProgressCard extends StatelessWidget {
                   CircleAvatar(
                     radius: 20.0.r,
                     backgroundColor: category.color.withValues(alpha: 0.15),
-                    child: Icon(category.icon, color: category.color, size: 20.0.r),
+                    child: Icon(
+                      category.icon,
+                      color: category.color,
+                      size: 20.0.r,
+                    ),
                   ),
                   SizedBox(width: 12.0.w),
                   Expanded(
@@ -96,10 +103,18 @@ class BudgetProgressCard extends StatelessWidget {
                         Text(
                           budget.name,
                           style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.bold, fontSize: 16.0.sp),
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0.sp,
+                                decoration: spentAmount >= budget.amount
+                                    ? TextDecoration.lineThrough
+                                    : null,
+                              ),
                         ),
                         Text(
-                          '${budget.budgetType.name.toUpperCase()} BUDGET',
+                          budget.budgetType
+                              .getLocalizedName(context)
+                              .toUpperCase(),
                           style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(
                                 color: Theme.of(context).colorScheme.outline,
@@ -149,18 +164,37 @@ class BudgetProgressCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    l10n.spentLabel('${budget.currencyCode} ${spentAmount.toStringAsFixed(2)}'),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 12.0.sp),
+                  Expanded(
+                    child: Text(
+                      l10n.spentLabel(
+                        formatCurrency(spentAmount, budget.currencyCode, context),
+                      ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(fontSize: 12.0.sp),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                  Text(
-                    l10n.remainingLabel('${budget.currencyCode} ${remainingAmount.toStringAsFixed(2)}'),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12.0.sp,
-                      color: remainingAmount < 0
-                          ? Theme.of(context).colorScheme.error
-                          : null,
+                  const SizedBox(width: 8.0),
+                  Flexible(
+                    child: Text(
+                      l10n.remainingLabel(
+                        formatCurrency(
+                          remainingAmount,
+                          budget.currencyCode,
+                          context,
+                        ),
+                      ),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12.0.sp,
+                        color: remainingAmount < 0
+                            ? Theme.of(context).colorScheme.error
+                            : null,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],

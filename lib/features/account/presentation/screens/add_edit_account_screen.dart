@@ -9,6 +9,7 @@ import '../../../user/presentation/cubit/user_cubit.dart';
 import '../../../user/presentation/cubit/user_state.dart';
 import '../../domain/entities/account.dart';
 import '../cubit/account_cubit.dart';
+import '../../../../core/utils/l10n_extensions.dart';
 
 class AddEditAccountScreen extends StatefulWidget {
   final Account? initialAccount;
@@ -128,6 +129,7 @@ class _AddEditAccountScreenState extends State<AddEditAccountScreen> {
                 ),
                 SizedBox(height: 16.0.h),
                 DropdownButtonFormField<AccountType>(
+                  isExpanded: true,
                   initialValue: _selectedType,
                   decoration: InputDecoration(
                     labelText: l10n.accountTypeLabel,
@@ -136,7 +138,7 @@ class _AddEditAccountScreenState extends State<AddEditAccountScreen> {
                   items: AccountType.values.map((type) {
                     return DropdownMenuItem<AccountType>(
                       value: type,
-                      child: Text(type.name.toUpperCase()),
+                      child: Text(type.getLocalizedName(context)),
                     );
                   }).toList(),
                   onChanged: (val) {
@@ -151,7 +153,7 @@ class _AddEditAccountScreenState extends State<AddEditAccountScreen> {
 
                 // Icon Picker Section
                 Text(
-                  'Account Icon',
+                  l10n.accountIconLabel,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 14.0.sp),
                 ),
                 SizedBox(height: 8.0.h),
@@ -229,8 +231,8 @@ class _AddEditAccountScreenState extends State<AddEditAccountScreen> {
 
                 // Default Switch
                 SwitchListTile(
-                  title: const Text('Default Account'),
-                  subtitle: const Text('Use this account as the default for new transactions'),
+                  title: Text(l10n.defaultAccountLabel),
+                  subtitle: Text(l10n.defaultAccountDesc),
                   value: _isDefault,
                   onChanged: (val) {
                     setState(() {

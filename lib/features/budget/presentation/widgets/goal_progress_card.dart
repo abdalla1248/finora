@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:intl/intl.dart';
+
+import '../../../../core/utils/currency_formatter.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/savings_goal.dart';
 import '../cubit/savings_goal_cubit.dart';
@@ -63,7 +65,11 @@ class GoalProgressCard extends StatelessWidget {
     // Calculate remaining days using calendar dates only
     final today = DateTime.now();
     final todayDate = DateTime(today.year, today.month, today.day);
-    final deadlineDate = DateTime(goal.deadline.year, goal.deadline.month, goal.deadline.day);
+    final deadlineDate = DateTime(
+      goal.deadline.year,
+      goal.deadline.month,
+      goal.deadline.day,
+    );
     final remainingDays = deadlineDate.difference(todayDate).inDays;
 
     final progressPercent = (goal.targetAmount > 0)
@@ -86,23 +92,28 @@ class GoalProgressCard extends StatelessWidget {
       deadlineStatusText = l10n.goalStatusDaysLeft(remainingDays.toString());
     }
 
-    final remainingAmount = (goal.targetAmount - goal.currentAmount).clamp(0.0, double.infinity);
+    final remainingAmount = (goal.targetAmount - goal.currentAmount).clamp(
+      0.0,
+      double.infinity,
+    );
 
     final titleStyle = isExpired
         ? Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              fontSize: 16.0.sp,
-              color: Theme.of(context).colorScheme.outline,
-              decoration: TextDecoration.lineThrough,
-            )
+            fontWeight: FontWeight.bold,
+            fontSize: 16.0.sp,
+            color: Theme.of(context).colorScheme.outline,
+            decoration: TextDecoration.lineThrough,
+          )
         : Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              fontSize: 16.0.sp,
-            );
+            fontWeight: FontWeight.bold,
+            fontSize: 16.0.sp,
+          );
 
     final deadlineColor = isExpired
         ? Theme.of(context).colorScheme.error
-        : (isCompleted ? const Color(0xFF10B981) : Theme.of(context).colorScheme.outline);
+        : (isCompleted
+              ? const Color(0xFF10B981)
+              : Theme.of(context).colorScheme.outline);
 
     return Card(
       margin: EdgeInsets.only(bottom: 12.0.h),
@@ -121,17 +132,21 @@ class GoalProgressCard extends StatelessWidget {
                     backgroundColor: isCompleted
                         ? const Color(0xFF10B981).withValues(alpha: 0.15)
                         : (isExpired
-                            ? Theme.of(context).colorScheme.errorContainer
-                            : Theme.of(context).colorScheme.primaryContainer),
+                              ? Theme.of(context).colorScheme.errorContainer
+                              : Theme.of(context).colorScheme.primaryContainer),
                     child: Icon(
                       isCompleted
                           ? Icons.check_circle
-                          : (isExpired ? Icons.warning_amber_rounded : Icons.savings),
+                          : (isExpired
+                                ? Icons.warning_amber_rounded
+                                : Icons.savings),
                       color: isCompleted
                           ? const Color(0xFF10B981)
                           : (isExpired
-                              ? Theme.of(context).colorScheme.error
-                              : Theme.of(context).colorScheme.onPrimaryContainer),
+                                ? Theme.of(context).colorScheme.error
+                                : Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimaryContainer),
                       size: 20.0.r,
                     ),
                   ),
@@ -148,7 +163,8 @@ class GoalProgressCard extends StatelessWidget {
                         ),
                         Text(
                           'Deadline: ${DateFormat.yMMMd().format(goal.deadline)} ($deadlineStatusText)',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
                                 color: deadlineColor,
                                 fontSize: 12.0.sp,
                               ),
@@ -166,7 +182,9 @@ class GoalProgressCard extends StatelessWidget {
                       fontSize: 16.0.sp,
                       color: isCompleted
                           ? const Color(0xFF10B981)
-                          : (isExpired ? Theme.of(context).colorScheme.error : Theme.of(context).colorScheme.primary),
+                          : (isExpired
+                                ? Theme.of(context).colorScheme.error
+                                : Theme.of(context).colorScheme.primary),
                     ),
                   ),
                 ],
@@ -186,8 +204,8 @@ class GoalProgressCard extends StatelessWidget {
                     isCompleted
                         ? const Color(0xFF10B981)
                         : (isExpired
-                            ? Theme.of(context).colorScheme.error
-                            : Theme.of(context).colorScheme.primary),
+                              ? Theme.of(context).colorScheme.error
+                              : Theme.of(context).colorScheme.primary),
                   ),
                 ),
               ),
@@ -199,18 +217,28 @@ class GoalProgressCard extends StatelessWidget {
                 runSpacing: 8.0.h,
                 children: [
                   Text(
-                    l10n.savedAmountLabel('$currency ${goal.currentAmount.toStringAsFixed(2)}'),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 12.0.sp),
+                    l10n.savedAmountLabel(
+                      formatCurrency(goal.currentAmount, currency, context),
+                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(fontSize: 10.0.sp),
                   ),
                   Text(
-                    l10n.remainingLabel('$currency ${remainingAmount.toStringAsFixed(2)}'),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 12.0.sp),
+                    l10n.remainingLabel(
+                      formatCurrency(remainingAmount, currency, context),
+                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(fontSize: 10.0.sp),
                   ),
                   Text(
-                    l10n.targetLabel('$currency ${goal.targetAmount.toStringAsFixed(2)}'),
+                    l10n.targetLabel(
+                      formatCurrency(goal.targetAmount, currency, context),
+                    ),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      fontSize: 12.0.sp,
+                      fontSize: 10.0.sp,
                     ),
                   ),
                 ],
@@ -236,10 +264,17 @@ class GoalProgressCard extends StatelessWidget {
                           );
                           context.read<SavingsGoalCubit>().updateGoal(updated);
                         },
-                        icon: Icon(Icons.check_circle_outline, size: 16.0.r, color: const Color(0xFF10B981)),
+                        icon: Icon(
+                          Icons.check_circle_outline,
+                          size: 16.0.r,
+                          color: const Color(0xFF10B981),
+                        ),
                         label: Text(
                           l10n.markAsCompleted,
-                          style: TextStyle(fontSize: 12.0.sp, color: const Color(0xFF10B981)),
+                          style: TextStyle(
+                            fontSize: 12.0.sp,
+                            color: const Color(0xFF10B981),
+                          ),
                         ),
                       ),
                     TextButton.icon(

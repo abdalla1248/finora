@@ -212,7 +212,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get deleteButton => 'حذف';
 
   @override
-  String get saveButton => 'حفظ المعاملة';
+  String get saveButton => 'حفظ';
 
   @override
   String get titleLabel => 'العنوان';
@@ -546,7 +546,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get statusCritical => 'حرج (90%+)';
 
   @override
-  String get statusExceeded => 'تجاوزت الميزانية (100%+)';
+  String get statusExceeded => 'متجاوز';
 
   @override
   String spentLabel(String amount) {
@@ -687,4 +687,175 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get okButton => 'موافق';
+
+  @override
+  String get accountIconLabel => 'أيقونة الحساب';
+
+  @override
+  String get defaultAccountLabel => 'الحساب الافتراضي';
+
+  @override
+  String get defaultAccountDesc =>
+      'استخدم هذا الحساب كحساب افتراضي للمعاملات الجديدة';
+
+  @override
+  String get accountTypeCash => 'نقدية';
+
+  @override
+  String get accountTypeBank => 'حساب بنكي';
+
+  @override
+  String get accountTypeSavings => 'حساب توفير';
+
+  @override
+  String get accountTypeCreditCard => 'بطاقة ائتمان';
+
+  @override
+  String get accountTypeWallet => 'محفظة رقمية';
+
+  @override
+  String get accountTypeBusiness => 'أعمال';
+
+  @override
+  String get budgetTypeDaily => 'ميزانية يومية';
+
+  @override
+  String get budgetTypeWeekly => 'ميزانية أسبوعية';
+
+  @override
+  String get budgetTypeMonthly => 'ميزانية شهرية';
+
+  @override
+  String get budgetTypeYearly => 'ميزانية سنوية';
+
+  @override
+  String get currentBalanceLabel => 'الرصيد الحالي';
+
+  @override
+  String get incomeLabel => 'الدخل';
+
+  @override
+  String get expensesLabel => 'المصروفات';
+
+  @override
+  String get netCashFlowLabel => 'صافي التدفقات النقدية';
+
+  @override
+  String get totalTransactionsLabel => 'إجمالي المعاملات';
+
+  @override
+  String get creationDateLabel => 'تاريخ الإنشاء';
+
+  @override
+  String get lastActivityLabel => 'آخر نشاط';
+
+  @override
+  String get monthlySpendLabel => 'الإنفاق الشهري';
+
+  @override
+  String get dailyAvgSpendLabel => 'متوسط الإنفاق اليومي';
+
+  @override
+  String get largestTxLabel => 'أكبر معاملة';
+
+  @override
+  String get cashFlowBreakdownLabel => 'تفصيل التدفقات النقدية';
+
+  @override
+  String get expensesByCategoryLabel => 'المصروفات حسب الفئة';
+
+  @override
+  String get noExpenseRecordsLabel =>
+      'لم يتم العثور على سجلات مصروفات لهذا الحساب.';
+
+  @override
+  String get accountDetailsTitle => 'تفاصيل الحساب';
+
+  @override
+  String get accountNotFoundError => 'الحساب غير موجود';
+
+  @override
+  String get budgetTypeCustom => 'ميزانية مخصصة';
+
+  @override
+  String get notificationsTitle => 'إعدادات الإشعارات';
+
+  @override
+  String get notificationsDesc =>
+      'إدارة تكرار التذكير، تنبيهات الميزانية، وتعارير الإنفاق';
+
+  @override
+  String get budgetNotificationsTitle => 'تنبيهات الميزانية';
+
+  @override
+  String get budgetNotificationsDesc =>
+      'التنبيه عند وصول الميزانية إلى 50٪، 80٪، 100٪، أو تجاوزها';
+
+  @override
+  String get goalNotificationsTitle => 'تنبيهات أهداف التوفير';
+
+  @override
+  String get goalNotificationsDesc =>
+      'التنبيه عند إكمال الهدف، اقتراب الانتهاء، أو حلول الموعد';
+
+  @override
+  String get reminderNotificationsTitle => 'تذكيرات المعاملات';
+
+  @override
+  String get reminderNotificationsDesc =>
+      'تنبيهات مجدولة لتسجيل المصروفات اليومية/الأسبوعية';
+
+  @override
+  String get weeklySummaryTitle => 'الملخص الأسبوعي';
+
+  @override
+  String get weeklySummaryDesc => 'استلام نظرة عامة أسبوعية عن إنفاقك';
+
+  @override
+  String get monthlySummaryTitle => 'الملخص الشهري';
+
+  @override
+  String get monthlySummaryDesc => 'استلام تقرير مالي شهري';
+
+  @override
+  String get reminderFrequencyTitle => 'تكرار التذكير';
+
+  @override
+  String get reminderTimeTitle => 'وقت التذكير';
+
+  @override
+  String get testNotificationButton => 'إرسال إشعار تجريبي';
+
+  @override
+  String get testNotificationSent => 'تم إرسال الإشعار التجريبي بنجاح!';
+
+  @override
+  String get permissionStatusTitle => 'إذن الإشعارات';
+
+  @override
+  String get permissionGranted => 'مسموح';
+
+  @override
+  String get permissionDenied => 'مرفوض (اضغط للطلب)';
+
+  @override
+  String get requestPermissionButton => 'منح الإذن';
+
+  @override
+  String get statusCompleted => 'مكتمل';
+
+  @override
+  String get statusExpired => 'منتهي';
+
+  @override
+  String get freqDaily => 'كل يوم';
+
+  @override
+  String get freqWeekly => 'كل أسبوع';
+
+  @override
+  String get freqBiWeekly => 'كل أسبوعين';
+
+  @override
+  String get freqMonthly => 'كل شهر';
 }

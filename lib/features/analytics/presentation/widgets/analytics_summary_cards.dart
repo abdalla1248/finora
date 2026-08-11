@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../core/utils/currency_formatter.dart';
 
 class AnalyticsSummaryCards extends StatelessWidget {
   final double totalIncome;
@@ -28,7 +29,7 @@ class AnalyticsSummaryCards extends StatelessWidget {
             Expanded(
               child: _SummaryCard(
                 title: l10n.totalIncomeLabel,
-                value: '$currency ${totalIncome.toStringAsFixed(2)}',
+                value: formatCurrency(totalIncome, currency, context),
                 icon: Icons.arrow_downward,
                 color: const Color(0xFF10B981),
               ),
@@ -37,7 +38,7 @@ class AnalyticsSummaryCards extends StatelessWidget {
             Expanded(
               child: _SummaryCard(
                 title: l10n.totalExpenseLabel,
-                value: '$currency ${totalExpense.toStringAsFixed(2)}',
+                value: formatCurrency(totalExpense, currency, context),
                 icon: Icons.arrow_upward,
                 color: Theme.of(context).colorScheme.error,
               ),
@@ -50,7 +51,7 @@ class AnalyticsSummaryCards extends StatelessWidget {
             Expanded(
               child: _SummaryCard(
                 title: l10n.netBalanceLabel,
-                value: '$currency ${netCashFlow.toStringAsFixed(2)}',
+                value: formatCurrency(netCashFlow, currency, context),
                 icon: Icons.account_balance_wallet,
                 color: netCashFlow >= 0
                     ? const Color(0xFF10B981)

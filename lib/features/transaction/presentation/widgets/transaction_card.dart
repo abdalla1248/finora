@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/design_system/color_schemes.dart';
+import '../../../../core/utils/currency_formatter.dart';
 import '../../domain/entities/category.dart';
 import '../../domain/entities/transaction.dart';
 
@@ -47,7 +48,7 @@ class TransactionCard extends StatelessWidget {
           ),
         ),
         trailing: Text(
-          '$amountPrefix${transaction.currencyCode} ${transaction.amount.toStringAsFixed(2)}',
+          '$amountPrefix${formatCurrency(transaction.amount, transaction.currencyCode, context)}',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
             color: amountColor,

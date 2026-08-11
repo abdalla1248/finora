@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../core/di/injection.dart';
 import '../core/logging/logger.dart';
+import '../features/notification/data/services/notification_service.dart';
 
 class Bootstrap {
   const Bootstrap._();
@@ -22,6 +23,8 @@ class Bootstrap {
     try {
       AppLogger.info('Starting dependency injection setup...');
       await DIContainer.setup();
+      AppLogger.info('Initializing Notification Service...');
+      await getIt<NotificationService>().init();
       AppLogger.info('Bootstrap setup successfully finalized.');
     } catch (e, stackTrace) {
       AppLogger.error('Critical failure during app bootstrap.', e, stackTrace);

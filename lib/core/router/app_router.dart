@@ -18,6 +18,7 @@ import '../../features/category/presentation/screens/add_edit_category_screen.da
 import '../../features/category/presentation/screens/category_management_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
+import '../../features/notification/presentation/screens/notification_settings_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/shell/presentation/screens/home_shell.dart';
 import '../../features/transaction/presentation/cubit/transaction_cubit.dart';
@@ -50,6 +51,7 @@ class AppRouter {
   static const String editCategory = '/categories/edit/:id';
   static const String backup = '/backup';
   static const String transactions = '/transactions';
+  static const String notificationSettings = '/settings/notifications';
 
   static CustomTransitionPage<void> _buildPageWithTransition({
     required BuildContext context,
@@ -269,6 +271,14 @@ class AppRouter {
           context: context,
           state: state,
           child: const TransactionListScreen(),
+        ),
+      ),
+      GoRoute(
+        path: notificationSettings,
+        pageBuilder: (context, state) => _buildPageWithTransition(
+          context: context,
+          state: state,
+          child: const NotificationSettingsScreen(),
         ),
       ),
       StatefulShellRoute.indexedStack(

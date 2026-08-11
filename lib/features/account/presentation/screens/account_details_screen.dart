@@ -16,6 +16,8 @@ import '../../domain/entities/account.dart';
 import '../../../../core/design_system/color_schemes.dart';
 import '../cubit/account_cubit.dart';
 import '../cubit/account_state.dart';
+import '../../../../core/utils/currency_formatter.dart';
+import '../../../../core/utils/l10n_extensions.dart';
 
 class AccountDetailsScreen extends StatelessWidget {
   final String accountId;
@@ -69,8 +71,8 @@ class AccountDetailsScreen extends StatelessWidget {
         final account = accountState.accounts.where((a) => a.id == accountId).firstOrNull;
         if (account == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Account Details')),
-            body: const ErrorState(message: 'Account not found'),
+            appBar: AppBar(title: Text(l10n.accountDetailsTitle)),
+            body: ErrorState(message: l10n.accountNotFoundError),
           );
         }
 
@@ -207,7 +209,7 @@ class AccountDetailsScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 12.0.h),
                 Text(
-                  'Current Balance',
+                  l10n.currentBalanceLabel,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         color: Theme.of(context).colorScheme.outline,
                         fontSize: 14.0.sp,
@@ -215,7 +217,7 @@ class AccountDetailsScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 8.0.h),
                 Text(
-                  '$currency ${account.balance.toStringAsFixed(2)}',
+                  formatCurrency(account.balance, currency, context),
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         fontSize: 32.0.sp,
@@ -240,12 +242,12 @@ class AccountDetailsScreen extends StatelessWidget {
                         children: [
                           Icon(Icons.arrow_downward, color: const Color(0xFF10B981), size: 18.0.r),
                           SizedBox(width: 4.0.w),
-                          Text('Income', style: TextStyle(fontSize: 12.0.sp)),
+                          Text(l10n.incomeLabel, style: TextStyle(fontSize: 12.0.sp)),
                         ],
                       ),
                       SizedBox(height: 8.0.h),
                       Text(
-                        '$currency ${totalIncome.toStringAsFixed(2)}',
+                        formatCurrency(totalIncome, currency, context),
                         style: TextStyle(
                           fontSize: 16.0.sp,
                           fontWeight: FontWeight.bold,
@@ -269,12 +271,12 @@ class AccountDetailsScreen extends StatelessWidget {
                         children: [
                           Icon(Icons.arrow_upward, color: Theme.of(context).colorScheme.error, size: 18.0.r),
                           SizedBox(width: 4.0.w),
-                          Text('Expenses', style: TextStyle(fontSize: 12.0.sp)),
+                          Text(l10n.expensesLabel, style: TextStyle(fontSize: 12.0.sp)),
                         ],
                       ),
                       SizedBox(height: 8.0.h),
                       Text(
-                        '$currency ${totalExpense.toStringAsFixed(2)}',
+                        formatCurrency(totalExpense, currency, context),
                         style: TextStyle(
                           fontSize: 16.0.sp,
                           fontWeight: FontWeight.bold,
@@ -296,9 +298,9 @@ class AccountDetailsScreen extends StatelessWidget {
               children: [
                 ListTile(
                   leading: const Icon(Icons.compare_arrows),
-                  title: const Text('Net Cash Flow'),
+                  title: Text(l10n.netCashFlowLabel),
                   trailing: Text(
-                    '$currency ${netBalance.toStringAsFixed(2)}',
+                    formatCurrency(netBalance, currency, context),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14.0.sp,
@@ -309,7 +311,7 @@ class AccountDetailsScreen extends StatelessWidget {
                 const Divider(height: 1.0),
                 ListTile(
                   leading: const Icon(Icons.tag),
-                  title: const Text('Total Transactions'),
+                  title: Text(l10n.totalTransactionsLabel),
                   trailing: Text(
                     '$txCount',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0.sp),
@@ -318,7 +320,7 @@ class AccountDetailsScreen extends StatelessWidget {
                 const Divider(height: 1.0),
                 ListTile(
                   leading: const Icon(Icons.calendar_today),
-                  title: const Text('Creation Date'),
+                  title: Text(l10n.creationDateLabel),
                   trailing: Text(
                     DateFormat.yMMMd().format(account.createdAt),
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0.sp),
@@ -327,7 +329,7 @@ class AccountDetailsScreen extends StatelessWidget {
                 const Divider(height: 1.0),
                 ListTile(
                   leading: const Icon(Icons.history),
-                  title: const Text('Last Activity'),
+                  title: Text(l10n.lastActivityLabel),
                   trailing: Text(
                     lastActivity,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.0.sp),
@@ -445,12 +447,12 @@ class AccountDetailsScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Monthly Spend',
+                        l10n.monthlySpendLabel,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 11.0.sp),
                       ),
                       SizedBox(height: 4.0.h),
                       Text(
-                        '${account.currencyCode} ${monthlySpending.toStringAsFixed(2)}',
+                        formatCurrency(monthlySpending, account.currencyCode, context),
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                               fontSize: 14.0.sp,
@@ -471,12 +473,12 @@ class AccountDetailsScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Daily Avg Spend',
+                        l10n.dailyAvgSpendLabel,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 11.0.sp),
                       ),
                       SizedBox(height: 4.0.h),
                       Text(
-                        '${account.currencyCode} ${averageDailySpending.toStringAsFixed(2)}',
+                        formatCurrency(averageDailySpending, account.currencyCode, context),
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                               fontSize: 14.0.sp,
@@ -496,13 +498,13 @@ class AccountDetailsScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Largest Tx',
+                        l10n.largestTxLabel,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 11.0.sp),
                       ),
                       SizedBox(height: 4.0.h),
                       Text(
                         largestTx != null
-                            ? '${largestTx.currencyCode} ${largestTx.amount.toStringAsFixed(2)}'
+                            ? formatCurrency(largestTx.amount, largestTx.currencyCode, context)
                             : 'N/A',
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
@@ -525,7 +527,7 @@ class AccountDetailsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Cash Flow Breakdown',
+                  l10n.cashFlowBreakdownLabel,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 16.0.sp),
                 ),
                 SizedBox(height: 16.0.h),
@@ -568,7 +570,7 @@ class AccountDetailsScreen extends StatelessWidget {
                         Container(width: 8.0.w, height: 8.0.h, color: const Color(0xFF10B981)),
                         SizedBox(width: 4.0.w),
                         Text(
-                          'Income: ${(incomeRatio * 100).toStringAsFixed(0)}%',
+                          '${l10n.incomeLabel}: ${(incomeRatio * 100).toStringAsFixed(0)}%',
                           style: TextStyle(fontSize: 12.0.sp),
                         ),
                       ],
@@ -578,7 +580,7 @@ class AccountDetailsScreen extends StatelessWidget {
                         Container(width: 8.0.w, height: 8.0.h, color: Theme.of(context).colorScheme.error),
                         SizedBox(width: 4.0.w),
                         Text(
-                          'Expense: ${(expenseRatio * 100).toStringAsFixed(0)}%',
+                          '${l10n.expensesLabel}: ${(expenseRatio * 100).toStringAsFixed(0)}%',
                           style: TextStyle(fontSize: 12.0.sp),
                         ),
                       ],
@@ -593,7 +595,7 @@ class AccountDetailsScreen extends StatelessWidget {
 
         // Expense by Category Section
         Text(
-          'Expenses by Category',
+          l10n.expensesByCategoryLabel,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 16.0.sp),
         ),
         SizedBox(height: 8.0.h),
@@ -603,7 +605,7 @@ class AccountDetailsScreen extends StatelessWidget {
               padding: EdgeInsets.all(16.0.r),
               child: Center(
                 child: Text(
-                  'No expense records found for this account.',
+                  l10n.noExpenseRecordsLabel,
                   style: TextStyle(color: Theme.of(context).colorScheme.outline, fontSize: 14.0.sp),
                 ),
               ),

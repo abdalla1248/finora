@@ -1133,7 +1133,7 @@ abstract class AppLocalizations {
   /// No description provided for @statusExceeded.
   ///
   /// In en, this message translates to:
-  /// **'Exceeded (100%+)'**
+  /// **'Exceeded'**
   String get statusExceeded;
 
   /// No description provided for @spentLabel.
@@ -1381,6 +1381,336 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'OK'**
   String get okButton;
+
+  /// No description provided for @accountIconLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Icon'**
+  String get accountIconLabel;
+
+  /// No description provided for @defaultAccountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Account'**
+  String get defaultAccountLabel;
+
+  /// No description provided for @defaultAccountDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this account as the default for new transactions'**
+  String get defaultAccountDesc;
+
+  /// No description provided for @accountTypeCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get accountTypeCash;
+
+  /// No description provided for @accountTypeBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank'**
+  String get accountTypeBank;
+
+  /// No description provided for @accountTypeSavings.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings'**
+  String get accountTypeSavings;
+
+  /// No description provided for @accountTypeCreditCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit Card'**
+  String get accountTypeCreditCard;
+
+  /// No description provided for @accountTypeWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Digital Wallet'**
+  String get accountTypeWallet;
+
+  /// No description provided for @accountTypeBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get accountTypeBusiness;
+
+  /// No description provided for @budgetTypeDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Budget'**
+  String get budgetTypeDaily;
+
+  /// No description provided for @budgetTypeWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Budget'**
+  String get budgetTypeWeekly;
+
+  /// No description provided for @budgetTypeMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Budget'**
+  String get budgetTypeMonthly;
+
+  /// No description provided for @budgetTypeYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly Budget'**
+  String get budgetTypeYearly;
+
+  /// No description provided for @currentBalanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Balance'**
+  String get currentBalanceLabel;
+
+  /// No description provided for @incomeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get incomeLabel;
+
+  /// No description provided for @expensesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses'**
+  String get expensesLabel;
+
+  /// No description provided for @netCashFlowLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Net Cash Flow'**
+  String get netCashFlowLabel;
+
+  /// No description provided for @totalTransactionsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Transactions'**
+  String get totalTransactionsLabel;
+
+  /// No description provided for @creationDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Creation Date'**
+  String get creationDateLabel;
+
+  /// No description provided for @lastActivityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Activity'**
+  String get lastActivityLabel;
+
+  /// No description provided for @monthlySpendLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Spend'**
+  String get monthlySpendLabel;
+
+  /// No description provided for @dailyAvgSpendLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Avg Spend'**
+  String get dailyAvgSpendLabel;
+
+  /// No description provided for @largestTxLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Largest Tx'**
+  String get largestTxLabel;
+
+  /// No description provided for @cashFlowBreakdownLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash Flow Breakdown'**
+  String get cashFlowBreakdownLabel;
+
+  /// No description provided for @expensesByCategoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses by Category'**
+  String get expensesByCategoryLabel;
+
+  /// No description provided for @noExpenseRecordsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'No expense records found for this account.'**
+  String get noExpenseRecordsLabel;
+
+  /// No description provided for @accountDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Details'**
+  String get accountDetailsTitle;
+
+  /// No description provided for @accountNotFoundError.
+  ///
+  /// In en, this message translates to:
+  /// **'Account not found'**
+  String get accountNotFoundError;
+
+  /// No description provided for @budgetTypeCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Budget'**
+  String get budgetTypeCustom;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Settings'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage reminder frequency, budget alerts, and spending reports'**
+  String get notificationsDesc;
+
+  /// No description provided for @budgetNotificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget Alerts'**
+  String get budgetNotificationsTitle;
+
+  /// No description provided for @budgetNotificationsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Notify when budget reaches 50%, 80%, 100%, or is exceeded'**
+  String get budgetNotificationsDesc;
+
+  /// No description provided for @goalNotificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings Goal Alerts'**
+  String get goalNotificationsTitle;
+
+  /// No description provided for @goalNotificationsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Notify when goal is reached, expiring, or deadline arrives'**
+  String get goalNotificationsDesc;
+
+  /// No description provided for @reminderNotificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Reminders'**
+  String get reminderNotificationsTitle;
+
+  /// No description provided for @reminderNotificationsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled alerts to log daily/weekly expenses'**
+  String get reminderNotificationsDesc;
+
+  /// No description provided for @weeklySummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Summary'**
+  String get weeklySummaryTitle;
+
+  /// No description provided for @weeklySummaryDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive a weekly overview of your spending'**
+  String get weeklySummaryDesc;
+
+  /// No description provided for @monthlySummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Summary'**
+  String get monthlySummaryTitle;
+
+  /// No description provided for @monthlySummaryDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive a monthly financial report'**
+  String get monthlySummaryDesc;
+
+  /// No description provided for @reminderFrequencyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder Frequency'**
+  String get reminderFrequencyTitle;
+
+  /// No description provided for @reminderTimeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder Time'**
+  String get reminderTimeTitle;
+
+  /// No description provided for @testNotificationButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Test Notification'**
+  String get testNotificationButton;
+
+  /// No description provided for @testNotificationSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Test notification sent successfully!'**
+  String get testNotificationSent;
+
+  /// No description provided for @permissionStatusTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Permission'**
+  String get permissionStatusTitle;
+
+  /// No description provided for @permissionGranted.
+  ///
+  /// In en, this message translates to:
+  /// **'Granted'**
+  String get permissionGranted;
+
+  /// No description provided for @permissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Denied (Tap to request)'**
+  String get permissionDenied;
+
+  /// No description provided for @requestPermissionButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Grant Permission'**
+  String get requestPermissionButton;
+
+  /// No description provided for @statusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get statusCompleted;
+
+  /// No description provided for @statusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get statusExpired;
+
+  /// No description provided for @freqDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Every Day'**
+  String get freqDaily;
+
+  /// No description provided for @freqWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Every Week'**
+  String get freqWeekly;
+
+  /// No description provided for @freqBiWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Every 2 Weeks'**
+  String get freqBiWeekly;
+
+  /// No description provided for @freqMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Every Month'**
+  String get freqMonthly;
 }
 
 class _AppLocalizationsDelegate

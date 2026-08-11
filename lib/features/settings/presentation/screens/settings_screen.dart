@@ -500,6 +500,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               // Management Section
               if (_matchesSearch(l10n.accountsTitle) ||
                   _matchesSearch(l10n.categoriesTitle) ||
+                  _matchesSearch(l10n.notificationsTitle) ||
                   _matchesSearch(l10n.backupExportTitle)) ...[
                 _SectionHeader(title: l10n.managementSectionTitle),
                 SizedBox(height: 8.0.h),
@@ -520,6 +521,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           title: Text(l10n.categoriesTitle),
                           trailing: const Icon(Icons.chevron_right),
                           onTap: () => context.push('/categories'),
+                        ),
+                      ],
+                      if (_matchesSearch(l10n.notificationsTitle)) ...[
+                        ListTile(
+                          leading: const Icon(Icons.notifications_outlined),
+                          title: Text(l10n.notificationsTitle),
+                          subtitle: Text(l10n.notificationsDesc),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () => context.push('/settings/notifications'),
                         ),
                       ],
                       if (_matchesSearch(l10n.backupExportTitle)) ...[

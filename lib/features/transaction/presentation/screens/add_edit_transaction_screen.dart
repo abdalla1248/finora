@@ -15,6 +15,7 @@ import '../../../user/presentation/cubit/user_state.dart';
 import '../../domain/entities/category.dart';
 import '../../domain/entities/transaction.dart';
 import '../cubit/transaction_cubit.dart';
+import '../../../../core/utils/currency_formatter.dart';
 
 class AddEditTransactionScreen extends StatefulWidget {
   final Transaction? initialTransaction;
@@ -236,7 +237,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                             SizedBox(width: 8.0.w),
                             Expanded(
                               child: Text(
-                                '${account.name} (${account.currencyCode} ${account.balance.toStringAsFixed(2)})',
+                                '${account.name} (${formatCurrency(account.balance, account.currencyCode, context)})',
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
@@ -285,7 +286,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                               SizedBox(width: 8.0.w),
                               Expanded(
                                 child: Text(
-                                  '${account.name} (${account.currencyCode} ${account.balance.toStringAsFixed(2)})',
+                                  '${account.name} (${formatCurrency(account.balance, account.currencyCode, context)})',
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),

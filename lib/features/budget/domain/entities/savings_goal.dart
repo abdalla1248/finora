@@ -33,6 +33,13 @@ class SavingsGoal extends Equatable {
     return ratio > 1.0 ? 100.0 : ratio * 100.0;
   }
 
+  bool get isExpired {
+    final now = DateTime.now();
+    final todayDate = DateTime(now.year, now.month, now.day);
+    final deadlineDate = DateTime(deadline.year, deadline.month, deadline.day);
+    return deadlineDate.isBefore(todayDate) && !(isCompleted || currentAmount >= targetAmount);
+  }
+
   SavingsGoal copyWith({
     String? id,
     String? title,
