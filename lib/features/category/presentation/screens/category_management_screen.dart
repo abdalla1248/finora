@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../../../core/design_system/color_schemes.dart';
+import '../../../../core/responsive/responsive_centered_view.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/loading_indicator.dart';
-import '../../../../core/responsive/responsive_centered_view.dart';
-import '../../../../core/design_system/color_schemes.dart';
 import '../../../transaction/domain/entities/transaction.dart';
 import '../../domain/entities/custom_category.dart';
 import '../cubit/category_cubit.dart';
@@ -24,6 +25,12 @@ class CategoryManagementScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(l10n.categoriesTitle),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () => context.push('/categories/add'),
+            ),
+          ],
           bottom: TabBar(
             tabs: [
               Tab(text: l10n.expenseCategoriesTab),
@@ -62,10 +69,6 @@ class CategoryManagementScreen extends StatelessWidget {
             },
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => context.push('/categories/add'),
-          child: const Icon(Icons.add),
-        ),
       ),
     );
   }
@@ -95,7 +98,6 @@ class _CategoryList extends StatelessWidget {
     }
 
     return ListView.builder(
-      padding: EdgeInsets.all(16.0.r),
       itemCount: categories.length,
       itemBuilder: (context, index) {
         final cat = categories[index];
@@ -109,9 +111,10 @@ class _CategoryList extends StatelessWidget {
             ),
             title: Text(
               cat.name,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 16.0.sp),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0.sp,
+              ),
             ),
             subtitle: Text(
               cat.type.name.toUpperCase(),

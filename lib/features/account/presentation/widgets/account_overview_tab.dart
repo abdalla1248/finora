@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/utils/currency_formatter.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../budget/domain/services/goal_allocation_service.dart';
+import '../../../budget/presentation/cubit/savings_goal_cubit.dart';
+import '../../../budget/presentation/cubit/savings_goal_state.dart';
 import '../../domain/entities/account.dart';
 import '../utils/account_presentation_extensions.dart';
 
@@ -65,6 +69,72 @@ class AccountOverviewTab extends StatelessWidget {
                         fontSize: 32.0.sp,
                         color: accountColor,
                       ),
+                ),
+                SizedBox(height: 16.0.h),
+                BlocBuilder<SavingsGoalCubit, SavingsGoalState>(
+                  builder: (context, goalState) {
+                    final allocated = GoalAllocationService.calculateTotalAllocatedForAccount(
+                      account.id,
+                      goalState.goals,
+                      isDefaultAccount: account.isDefault,
+                    );
+                    final available = GoalAllocationService.calculateUnallocatedBalance(
+                      account,
+                      goalState.goals,
+                    );
+
+                    return Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 12.0.h),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surfaceContainer,
+                        borderRadius: BorderRadius.circular(12.0.r),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Column(
+                            children: [
+                              Text(
+                                'Allocated',
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 11.0.sp),
+                              ),
+                              SizedBox(height: 4.0.h),
+                              Text(
+                                formatCurrency(allocated, currency, context),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14.0.sp,
+                                  color: Theme.of(context).colorScheme.tertiary,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            height: 24.0.h,
+                            width: 1.0,
+                            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                'Available',
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 11.0.sp),
+                              ),
+                              SizedBox(height: 4.0.h),
+                              Text(
+                                formatCurrency(available, currency, context),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14.0.sp,
+                                  color: const Color(0xFF10B981),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

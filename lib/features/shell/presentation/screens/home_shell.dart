@@ -39,16 +39,15 @@ class _HomeShellState extends State<HomeShell> {
   @override
   void didUpdateWidget(HomeShell oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.navigationShell.currentIndex !=
-        oldWidget.navigationShell.currentIndex) {
-      if (_pageController.hasClients &&
-          _pageController.page?.round() !=
-              widget.navigationShell.currentIndex) {
-        _pageController.animateToPage(
-          widget.navigationShell.currentIndex,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOutCubic,
-        );
+    final targetIndex = widget.navigationShell.currentIndex;
+    if (targetIndex != oldWidget.navigationShell.currentIndex) {
+      if (_pageController.hasClients) {
+        final currentPos = _pageController.page?.round() ?? targetIndex;
+        if (currentPos != targetIndex) {
+          if ((targetIndex - currentPos).abs() > 1) {
+            _pageController.jumpToPage(targetIndex);
+          }
+        }
       }
     }
   }
@@ -69,65 +68,114 @@ class _HomeShellState extends State<HomeShell> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final currentIndex = widget.navigationShell.currentIndex;
+
+    // Show FAB on Dashboard tab (index 0)
+    final showFab = currentIndex == 0;
 
     return Scaffold(
+      extendBody: true,
       body: PageView(
         controller: _pageController,
         onPageChanged: _onPageChanged,
         physics: const BouncingScrollPhysics(),
         children: _pages,
       ),
+      floatingActionButton: AnimatedScale(
+        scale: showFab ? 1.0 : 0.0,
+        duration: const Duration(milliseconds: 200),
+        child: FloatingActionButton(
+          onPressed: () {
+            if (currentIndex == 0) {
+              context.push('/transactions/add');
+            }
+          },
+          child: const Icon(Icons.add),
+        ),
+      ),
       bottomNavigationBar: CurvedNavigationBar(
-        index: widget.navigationShell.currentIndex,
+        index: currentIndex,
         height: 65.0,
         color: theme.colorScheme.surfaceContainerHighest,
         buttonBackgroundColor: theme.colorScheme.primaryContainer,
-        backgroundColor: theme.colorScheme.surface,
+        backgroundColor: Colors.transparent,
         animationCurve: Curves.easeInOutCubic,
         animationDuration: const Duration(milliseconds: 300),
         onTap: (index) {
           if (_pageController.hasClients) {
-            _pageController.animateToPage(
-              index,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOutCubic,
-            );
+            if ((index - currentIndex).abs() > 1) {
+              _pageController.jumpToPage(index);
+            } else {
+              _pageController.animateToPage(
+                index,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOutCubic,
+              );
+            }
           }
           widget.navigationShell.goBranch(
             index,
-            initialLocation: index == widget.navigationShell.currentIndex,
+            initialLocation: index == currentIndex,
           );
         },
         items: [
           CurvedNavigationBarItem(
-            child: Icon(Icons.dashboard, color: theme.colorScheme.onSurface),
+            child: Icon(
+              Icons.dashboard,
+              color: currentIndex == 0
+                  ? theme.colorScheme.onPrimaryContainer
+                  : theme.colorScheme.onSurfaceVariant,
+            ),
             label: l10n.appTitle,
             labelStyle: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.onSurface,
+              color: currentIndex == 0
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.bold,
             ),
           ),
           CurvedNavigationBarItem(
-            child: Icon(Icons.pie_chart, color: theme.colorScheme.onSurface),
+            child: Icon(
+              Icons.pie_chart,
+              color: currentIndex == 1
+                  ? theme.colorScheme.onPrimaryContainer
+                  : theme.colorScheme.onSurfaceVariant,
+            ),
             label: l10n.budgetsTitle,
             labelStyle: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.onSurface,
+              color: currentIndex == 1
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.bold,
             ),
           ),
           CurvedNavigationBarItem(
-            child: Icon(Icons.trending_up, color: theme.colorScheme.onSurface),
+            child: Icon(
+              Icons.trending_up,
+              color: currentIndex == 2
+                  ? theme.colorScheme.onPrimaryContainer
+                  : theme.colorScheme.onSurfaceVariant,
+            ),
             label: l10n.analyticsTitle,
             labelStyle: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.onSurface,
+              color: currentIndex == 2
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.bold,
             ),
           ),
           CurvedNavigationBarItem(
-            child: Icon(Icons.settings, color: theme.colorScheme.onSurface),
+            child: Icon(
+              Icons.settings,
+              color: currentIndex == 3
+                  ? theme.colorScheme.onPrimaryContainer
+                  : theme.colorScheme.onSurfaceVariant,
+            ),
             label: l10n.settingsTitle,
             labelStyle: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.onSurface,
+              color: currentIndex == 3
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.bold,
             ),
           ),

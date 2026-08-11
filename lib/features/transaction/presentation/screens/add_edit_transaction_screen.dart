@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -147,7 +146,6 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
 
           return ResponsiveCenteredView(
             child: SingleChildScrollView(
-              padding: EdgeInsets.all(24.0.r),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -158,10 +156,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                         ButtonSegment(
                           value: TransactionType.expense,
                           label: Text(l10n.typeExpense),
-                          icon: Icon(
-                            Icons.arrow_downward,
-                            color: expenseColor,
-                          ),
+                          icon: Icon(Icons.arrow_downward, color: expenseColor),
                         ),
                         ButtonSegment(
                           value: TransactionType.income,
@@ -313,8 +308,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                     BlocBuilder<UserCubit, UserState>(
                       builder: (context, userState) {
                         final currency =
-                            (userState is UserLoaded &&
-                                userState.user != null)
+                            (userState is UserLoaded && userState.user != null)
                             ? userState.user!.preferredCurrencyCode
                             : 'USD';
 
@@ -339,8 +333,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                                     orElse: () => allCategories.first,
                                   )
                                   .getLocalizedName(l10n);
-                              final title =
-                                  _titleController.text.trim().isEmpty
+                              final title = _titleController.text.trim().isEmpty
                                   ? categoryName
                                   : _titleController.text.trim();
 
@@ -358,8 +351,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                                 currencyCode: currency,
                                 transactionDate: _selectedDate,
                                 createdAt:
-                                    widget.initialTransaction?.createdAt ??
-                                    now,
+                                    widget.initialTransaction?.createdAt ?? now,
                                 updatedAt: now,
                                 note: finalNote,
                               );
@@ -369,9 +361,9 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                                     .read<TransactionCubit>()
                                     .updateTransaction(transaction);
                               } else {
-                                context
-                                    .read<TransactionCubit>()
-                                    .addTransaction(transaction);
+                                context.read<TransactionCubit>().addTransaction(
+                                  transaction,
+                                );
                               }
 
                               context.pop();
@@ -384,9 +376,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                             backgroundColor: Theme.of(
                               context,
                             ).colorScheme.primaryContainer,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 16.0,
-                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 16.0),
                           ),
                           child: Text(l10n.saveButton),
                         );

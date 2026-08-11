@@ -69,7 +69,6 @@ class _AddEditBudgetScreenState extends State<AddEditBudgetScreen> {
       ),
       body: ResponsiveCenteredView(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(24.0.r),
           child: Form(
             key: _formKey,
             child: Column(

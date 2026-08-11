@@ -116,7 +116,15 @@ class AccountManagementScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.accountsTitle)),
+      appBar: AppBar(
+        title: Text(l10n.accountsTitle),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () => context.push('/accounts/add'),
+          ),
+        ],
+      ),
       body: ResponsiveCenteredView(
         child: BlocBuilder<AccountCubit, AccountState>(
           builder: (context, state) {
@@ -221,10 +229,6 @@ class AccountManagementScreen extends StatelessWidget {
             );
           },
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push('/accounts/add'),
-        child: const Icon(Icons.add),
       ),
     );
   }

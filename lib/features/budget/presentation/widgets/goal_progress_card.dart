@@ -5,7 +5,10 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/utils/currency_formatter.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../account/domain/entities/account.dart';
+import '../../../account/presentation/cubit/account_cubit.dart';
 import '../../domain/entities/savings_goal.dart';
+import '../../domain/services/goal_allocation_service.dart';
 import '../cubit/savings_goal_cubit.dart';
 
 class GoalProgressCard extends StatelessWidget {
@@ -22,38 +25,136 @@ class GoalProgressCard extends StatelessWidget {
 
   void _showDepositDialog(BuildContext context, AppLocalizations l10n) {
     final controller = TextEditingController();
+    final accountState = context.read<AccountCubit>().state;
+    final goalCubit = context.read<SavingsGoalCubit>();
+    final allGoals = goalCubit.state.goals;
+
+    Account? linkedAccount;
+    if (goal.linkedAccountId != null) {
+      linkedAccount = accountState.accounts.where((a) => a.id == goal.linkedAccountId).firstOrNull;
+    }
+    linkedAccount ??= accountState.accounts.where((a) => a.isDefault).firstOrNull ?? accountState.accounts.firstOrNull;
+
+    if (linkedAccount == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please create an Account first before allocating money.')),
+      );
+      return;
+    }
+
+    final unallocatedBalance = GoalAllocationService.calculateUnallocatedBalance(
+      linkedAccount,
+      allGoals,
+    );
+    final remainingGoal = goal.remainingAmount;
+    final maxAllocatable = unallocatedBalance < remainingGoal ? unallocatedBalance : remainingGoal;
+
+    String? errorText;
+
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(l10n.contributeGoalTitle),
-        content: TextField(
-          controller: controller,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: InputDecoration(
-            labelText: l10n.depositAmountLabel,
-            border: const OutlineInputBorder(),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(l10n.cancelButton),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final deposit = double.tryParse(controller.text.trim());
-              if (deposit != null && deposit > 0) {
-                Navigator.of(dialogContext).pop();
-                final updated = goal.copyWith(
-                  currentAmount: goal.currentAmount + deposit,
-                  updatedAt: DateTime.now(),
-                );
-                context.read<SavingsGoalCubit>().updateGoal(updated);
-              }
-            },
-            child: Text(l10n.contributeButton),
-          ),
-        ],
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          return AlertDialog(
+            title: Text(l10n.contributeGoalTitle),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(12.0.r),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(8.0.r),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Account: ${linkedAccount!.name}',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.0.sp),
+                        ),
+                        SizedBox(height: 4.0.h),
+                        Text(
+                          'Available Unallocated: ${formatCurrency(unallocatedBalance, currency, context)}',
+                          style: TextStyle(fontSize: 12.0.sp, color: Theme.of(context).colorScheme.primary),
+                        ),
+                        SizedBox(height: 2.0.h),
+                        Text(
+                          'Already Allocated to Goal: ${formatCurrency(goal.allocatedAmount, currency, context)}',
+                          style: TextStyle(fontSize: 12.0.sp),
+                        ),
+                        SizedBox(height: 2.0.h),
+                        Text(
+                          'Remaining Goal: ${formatCurrency(remainingGoal, currency, context)}',
+                          style: TextStyle(fontSize: 12.0.sp),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 16.0.h),
+                  TextField(
+                    controller: controller,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    decoration: InputDecoration(
+                      labelText: l10n.depositAmountLabel,
+                      hintText: 'Max: ${maxAllocatable.toStringAsFixed(2)}',
+                      border: const OutlineInputBorder(),
+                      errorText: errorText,
+                    ),
+                    onChanged: (val) {
+                      setDialogState(() {
+                        errorText = null;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: Text(l10n.cancelButton),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  final deposit = double.tryParse(controller.text.trim());
+                  if (deposit == null || deposit <= 0) {
+                    setDialogState(() {
+                      errorText = 'Please enter a valid positive amount.';
+                    });
+                    return;
+                  }
+
+                  final validationErr = GoalAllocationService.validateAllocation(
+                    amountToAllocate: deposit,
+                    goal: goal,
+                    targetAccount: linkedAccount!,
+                    allGoals: allGoals,
+                  );
+
+                  if (validationErr != null) {
+                    setDialogState(() {
+                      errorText = validationErr;
+                    });
+                    return;
+                  }
+
+                  Navigator.of(dialogContext).pop();
+                  final newAllocated = goal.allocatedAmount + deposit;
+                  final updated = goal.copyWith(
+                    allocatedAmount: newAllocated,
+                    linkedAccountId: linkedAccount.id,
+                    updatedAt: DateTime.now(),
+                  );
+                  goalCubit.updateGoal(updated);
+                },
+                child: Text(l10n.contributeButton),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -72,12 +173,10 @@ class GoalProgressCard extends StatelessWidget {
     );
     final remainingDays = deadlineDate.difference(todayDate).inDays;
 
-    final progressPercent = (goal.targetAmount > 0)
-        ? (goal.currentAmount / goal.targetAmount * 100.0)
-        : 0.0;
+    final progressPercent = goal.progressPercentage;
     final percentage = (progressPercent / 100.0).clamp(0.0, 1.0);
-    final isCompleted = goal.isCompleted || percentage >= 1.0;
-    final isExpired = remainingDays < 0 && !isCompleted;
+    final isCompleted = goal.status == SavingsGoalStatus.completed;
+    final isExpired = goal.status == SavingsGoalStatus.overdue;
 
     String deadlineStatusText;
     if (isCompleted) {
@@ -92,10 +191,7 @@ class GoalProgressCard extends StatelessWidget {
       deadlineStatusText = l10n.goalStatusDaysLeft(remainingDays.toString());
     }
 
-    final remainingAmount = (goal.targetAmount - goal.currentAmount).clamp(
-      0.0,
-      double.infinity,
-    );
+    final remainingAmount = goal.remainingAmount;
 
     final titleStyle = isExpired
         ? Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -211,14 +307,14 @@ class GoalProgressCard extends StatelessWidget {
               ),
               SizedBox(height: 16.0.h),
 
-              // Labeled Values section (Using Wrap to avoid overlays/overflows)
+              // Labeled Values section
               Wrap(
                 spacing: 12.0.w,
                 runSpacing: 8.0.h,
                 children: [
                   Text(
                     l10n.savedAmountLabel(
-                      formatCurrency(goal.currentAmount, currency, context),
+                      formatCurrency(goal.allocatedAmount, currency, context),
                     ),
                     style: Theme.of(
                       context,
@@ -259,7 +355,7 @@ class GoalProgressCard extends StatelessWidget {
                         onPressed: () {
                           final updated = goal.copyWith(
                             isCompleted: true,
-                            currentAmount: goal.targetAmount,
+                            allocatedAmount: goal.targetAmount,
                             updatedAt: DateTime.now(),
                           );
                           context.read<SavingsGoalCubit>().updateGoal(updated);

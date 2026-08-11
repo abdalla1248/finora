@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/responsive/responsive_centered_view.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../account/presentation/cubit/account_cubit.dart';
+import '../../../account/presentation/cubit/account_state.dart';
 import '../../domain/entities/savings_goal.dart';
 import '../cubit/savings_goal_cubit.dart';
 
@@ -22,10 +24,10 @@ class _AddEditGoalScreenState extends State<AddEditGoalScreen> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _titleController;
   late final TextEditingController _targetAmountController;
-  late final TextEditingController _currentAmountController;
   late final TextEditingController _notesController;
 
   late DateTime _deadline;
+  String? _selectedAccountId;
 
   @override
   void initState() {
@@ -35,10 +37,8 @@ class _AddEditGoalScreenState extends State<AddEditGoalScreen> {
     _targetAmountController = TextEditingController(
       text: g != null ? g.targetAmount.toString() : '',
     );
-    _currentAmountController = TextEditingController(
-      text: g != null ? g.currentAmount.toString() : '0',
-    );
     _notesController = TextEditingController(text: g?.notes ?? '');
+    _selectedAccountId = g?.linkedAccountId;
 
     _deadline = g?.deadline ?? DateTime.now().add(const Duration(days: 365));
   }
@@ -47,7 +47,6 @@ class _AddEditGoalScreenState extends State<AddEditGoalScreen> {
   void dispose() {
     _titleController.dispose();
     _targetAmountController.dispose();
-    _currentAmountController.dispose();
     _notesController.dispose();
     super.dispose();
   }
@@ -117,7 +116,6 @@ class _AddEditGoalScreenState extends State<AddEditGoalScreen> {
       ),
       body: ResponsiveCenteredView(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(24.0.r),
           child: Form(
             key: _formKey,
             child: Column(
@@ -158,15 +156,33 @@ class _AddEditGoalScreenState extends State<AddEditGoalScreen> {
                   },
                 ),
                 SizedBox(height: 16.0.h),
-                TextFormField(
-                  controller: _currentAmountController,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: l10n.currentAmountLabel,
-                    border: const OutlineInputBorder(),
-                  ),
+                BlocBuilder<AccountCubit, AccountState>(
+                  builder: (context, accountState) {
+                    final accounts = accountState.accounts;
+                    if (_selectedAccountId == null && accounts.isNotEmpty) {
+                      final defaultAcc = accounts.where((a) => a.isDefault).firstOrNull ?? accounts.first;
+                      _selectedAccountId = defaultAcc.id;
+                    }
+
+                    return DropdownButtonFormField<String>(
+                      initialValue: _selectedAccountId,
+                      decoration: const InputDecoration(
+                        labelText: 'Linked Account',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: accounts.map((account) {
+                        return DropdownMenuItem<String>(
+                          value: account.id,
+                          child: Text('${account.name} (${account.currencyCode})'),
+                        );
+                      }).toList(),
+                      onChanged: (val) {
+                        setState(() {
+                          _selectedAccountId = val;
+                        });
+                      },
+                    );
+                  },
                 ),
                 SizedBox(height: 16.0.h),
                 InkWell(
@@ -196,11 +212,7 @@ class _AddEditGoalScreenState extends State<AddEditGoalScreen> {
                       final target = double.parse(
                         _targetAmountController.text.trim(),
                       );
-                      final current =
-                          double.tryParse(
-                            _currentAmountController.text.trim(),
-                          ) ??
-                          0.0;
+                      final existingAllocated = widget.initialGoal?.allocatedAmount ?? 0.0;
                       final now = DateTime.now();
 
                       final goal = SavingsGoal(
@@ -209,12 +221,13 @@ class _AddEditGoalScreenState extends State<AddEditGoalScreen> {
                             now.millisecondsSinceEpoch.toString(),
                         title: _titleController.text.trim(),
                         targetAmount: target,
-                        currentAmount: current,
+                        allocatedAmount: existingAllocated,
+                        linkedAccountId: _selectedAccountId,
                         deadline: _deadline,
                         notes: _notesController.text.trim(),
                         createdAt: widget.initialGoal?.createdAt ?? now,
                         updatedAt: now,
-                        isCompleted: current >= target,
+                        isCompleted: existingAllocated >= target,
                       );
 
                       if (isEditing) {

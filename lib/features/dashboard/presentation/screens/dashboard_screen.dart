@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/responsive/responsive_centered_view.dart';
 import '../../../../core/tutorial/domain/entities/tutorial_step.dart';
@@ -186,17 +185,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           );
         },
-      ),
-      floatingActionButton: AnimatedScale(
-        scale: _showFab ? 1.0 : 0.0,
-        duration: const Duration(milliseconds: 200),
-        child: FloatingActionButton(
-          key: _fabKey,
-          onPressed: () {
-            context.push('/transactions/add');
-          },
-          child: const Icon(Icons.add),
-        ),
       ),
     );
   }

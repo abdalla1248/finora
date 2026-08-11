@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/loading_indicator.dart';
-import '../../../../core/responsive/responsive_centered_view.dart';
 import '../../../transaction/presentation/cubit/transaction_cubit.dart';
 import '../../../transaction/presentation/cubit/transaction_state.dart';
 import '../../../user/presentation/cubit/user_cubit.dart';
@@ -42,7 +42,7 @@ class BudgetScreen extends StatelessWidget {
                 ? userState.user!.preferredCurrencyCode
                 : 'USD';
 
-            return ResponsiveCenteredView(
+            return SafeArea(
               child: TabBarView(
                 children: [
                   // Tab 1: Budgets List
@@ -154,21 +154,6 @@ class BudgetScreen extends StatelessWidget {
                   ),
                 ],
               ),
-            );
-          },
-        ),
-        floatingActionButton: Builder(
-          builder: (context) {
-            return FloatingActionButton(
-              onPressed: () {
-                final tabIndex = DefaultTabController.of(context).index;
-                if (tabIndex == 0) {
-                  context.push('/budgets/add');
-                } else {
-                  context.push('/goals/add');
-                }
-              },
-              child: const Icon(Icons.add),
             );
           },
         ),

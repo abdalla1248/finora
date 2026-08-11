@@ -65,6 +65,16 @@ class FinoraApp extends StatelessWidget {
         elevation: 0,
         scrolledUnderElevation: 1.0,
       ),
+      tabBarTheme: TabBarThemeData(
+        dividerColor: Colors.transparent,
+        dividerHeight: 0.0,
+        indicatorSize: TabBarIndicatorSize.label,
+        indicator: UnderlineTabIndicator(
+          borderSide: BorderSide(color: colorScheme.primary, width: 3.0),
+        ),
+        labelColor: colorScheme.primary,
+        unselectedLabelColor: colorScheme.onSurfaceVariant,
+      ),
       cardTheme: CardThemeData(
         color: colorScheme.surfaceContainer,
         elevation: 2.0,

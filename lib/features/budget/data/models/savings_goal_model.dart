@@ -38,6 +38,12 @@ class SavingsGoalModel extends HiveObject {
   @HiveField(10)
   final bool isCompleted;
 
+  @HiveField(11)
+  final double? allocatedAmount;
+
+  @HiveField(12)
+  final String? linkedAccountId;
+
   SavingsGoalModel({
     required this.id,
     required this.title,
@@ -50,6 +56,8 @@ class SavingsGoalModel extends HiveObject {
     required this.createdAt,
     required this.updatedAt,
     required this.isCompleted,
+    this.allocatedAmount,
+    this.linkedAccountId,
   });
 
   factory SavingsGoalModel.fromEntity(SavingsGoal entity) {
@@ -57,7 +65,7 @@ class SavingsGoalModel extends HiveObject {
       id: entity.id,
       title: entity.title,
       targetAmount: entity.targetAmount,
-      currentAmount: entity.currentAmount,
+      currentAmount: entity.allocatedAmount,
       deadline: entity.deadline,
       colorHex: entity.colorHex,
       iconData: entity.iconData,
@@ -65,15 +73,19 @@ class SavingsGoalModel extends HiveObject {
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
       isCompleted: entity.isCompleted,
+      allocatedAmount: entity.allocatedAmount,
+      linkedAccountId: entity.linkedAccountId,
     );
   }
 
   SavingsGoal toEntity() {
+    final effectiveAllocated = allocatedAmount ?? currentAmount;
     return SavingsGoal(
       id: id,
       title: title,
       targetAmount: targetAmount,
-      currentAmount: currentAmount,
+      allocatedAmount: effectiveAllocated,
+      linkedAccountId: linkedAccountId,
       deadline: deadline,
       colorHex: colorHex,
       iconData: iconData,

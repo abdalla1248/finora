@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../l10n/app_localizations.dart';
-import '../../../../core/responsive/responsive_centered_view.dart';
+
 import '../../../../core/design_system/color_schemes.dart';
+import '../../../../core/responsive/responsive_centered_view.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../transaction/domain/entities/transaction.dart';
 import '../../domain/entities/custom_category.dart';
 import '../cubit/category_cubit.dart';
@@ -70,7 +71,6 @@ class _AddEditCategoryScreenState extends State<AddEditCategoryScreen> {
       ),
       body: ResponsiveCenteredView(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(24.0.r),
           child: Form(
             key: _formKey,
             child: Column(
@@ -117,7 +117,9 @@ class _AddEditCategoryScreenState extends State<AddEditCategoryScreen> {
                 SizedBox(height: 24.0.h),
                 Text(
                   l10n.colorLabel,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 14.0.sp),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontSize: 14.0.sp),
                 ),
                 SizedBox(height: 8.0.h),
                 Wrap(
@@ -139,7 +141,9 @@ class _AddEditCategoryScreenState extends State<AddEditCategoryScreen> {
                           shape: BoxShape.circle,
                           border: isSelected
                               ? Border.all(
-                                  color: Theme.of(context).colorScheme.onSurface,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   width: 3.0.r,
                                 )
                               : null,
