@@ -52,7 +52,6 @@ class BackupExportScreen extends StatelessWidget {
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () => _exportJson(context),
                     ),
-                    const Divider(height: 1.0),
                     ListTile(
                       leading: const Icon(Icons.table_chart),
                       title: Text(l10n.exportCsvLabel),
@@ -78,7 +77,6 @@ class BackupExportScreen extends StatelessWidget {
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () => _showRestoreDialog(context, l10n),
                     ),
-                    const Divider(height: 1.0),
                     ListTile(
                       leading: Icon(
                         Icons.delete_forever,

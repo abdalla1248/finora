@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'responsive_breakpoints.dart';
 
 class ResponsiveCenteredView extends StatelessWidget {
@@ -15,11 +16,23 @@ class ResponsiveCenteredView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    final horizontalPadding = context.responsiveValue<double>(
+      mobile: 16.0,
+      tablet: 24.0,
+      desktop: 32.0,
+    );
+
+    return Align(
+      alignment: Alignment.topCenter,
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: maxWidth),
+        constraints: BoxConstraints(maxWidth: maxWidth, minWidth: 0),
         child: Padding(
-          padding: padding ?? context.responsivePadding,
+          padding:
+              padding ??
+              EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+                vertical: 16.0,
+              ),
           child: child,
         ),
       ),

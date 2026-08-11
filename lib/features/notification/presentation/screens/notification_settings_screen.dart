@@ -4,6 +4,7 @@ import 'package:finora/core/responsive/responsive_centered_view.dart';
 import 'package:finora/l10n/app_localizations.dart';
 import 'package:finora/features/notification/data/services/notification_service.dart';
 import 'package:finora/features/notification/domain/entities/notification_settings.dart';
+import 'package:finora/features/notification/presentation/widgets/notification_diagnostics_card.dart';
 
 class NotificationSettingsScreen extends StatefulWidget {
   const NotificationSettingsScreen({super.key});
@@ -130,7 +131,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             ),
             SizedBox(height: 16.0.h),
 
-            // Toggles Card
+            // Toggles Card (modernized without Dividers)
             Card(
               elevation: 2.0,
               shadowColor: theme.colorScheme.shadow.withValues(alpha: 0.08),
@@ -147,7 +148,6 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                       });
                     },
                   ),
-                  const Divider(height: 1),
                   SwitchListTile(
                     secondary: const Icon(Icons.flag_outlined),
                     title: Text(l10n.goalNotificationsTitle),
@@ -159,7 +159,6 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                       });
                     },
                   ),
-                  const Divider(height: 1),
                   SwitchListTile(
                     secondary: const Icon(Icons.alarm),
                     title: Text(l10n.reminderNotificationsTitle),
@@ -171,7 +170,6 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                       });
                     },
                   ),
-                  const Divider(height: 1),
                   SwitchListTile(
                     secondary: const Icon(Icons.calendar_view_week),
                     title: Text(l10n.weeklySummaryTitle),
@@ -183,7 +181,6 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                       });
                     },
                   ),
-                  const Divider(height: 1),
                   SwitchListTile(
                     secondary: const Icon(Icons.calendar_month),
                     title: Text(l10n.monthlySummaryTitle),
@@ -297,64 +294,13 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
               ),
             ),
             SizedBox(height: 24.0.h),
-            Card(
-              elevation: 1.0,
-              color: theme.colorScheme.surfaceContainerLow,
-              child: Padding(
-                padding: EdgeInsets.all(16.0.r),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'System Diagnostics',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: theme.colorScheme.secondary,
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.refresh, size: 20),
-                          onPressed: _loadDiagnostics,
-                        ),
-                      ],
-                    ),
-                    const Divider(),
-                    _DiagnosticRow(label: 'Initialized', value: _diagnostics['initialized']?.toString() ?? 'false'),
-                    _DiagnosticRow(label: 'OS Permission', value: _diagnostics['notificationPermission']?.toString() ?? 'unknown'),
-                    _DiagnosticRow(label: 'Exact Alarm', value: _diagnostics['exactAlarmPermission']?.toString() ?? 'unknown'),
-                    _DiagnosticRow(label: 'Pending Reminders', value: _diagnostics['pendingCount']?.toString() ?? '0'),
-                    _DiagnosticRow(label: 'App Timezone', value: _diagnostics['localTimezone']?.toString() ?? 'unknown'),
-                    _DiagnosticRow(label: 'Current Time', value: _diagnostics['currentTime']?.toString() ?? 'unknown'),
-                  ],
-                ),
-              ),
+
+            NotificationDiagnosticsCard(
+              diagnostics: _diagnostics,
+              onRefresh: _loadDiagnostics,
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _DiagnosticRow extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _DiagnosticRow({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
-          Text(value, style: TextStyle(color: Colors.grey[600], fontSize: 13)),
-        ],
       ),
     );
   }

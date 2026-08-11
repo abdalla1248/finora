@@ -3,19 +3,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import '../../../../l10n/app_localizations.dart';
-import '../../../../shared/widgets/error_state.dart';
+
 import '../../../../core/design_system/color_schemes.dart';
 import '../../../../core/responsive/responsive_centered_view.dart';
+import '../../../../core/utils/currency_formatter.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../../../shared/widgets/error_state.dart';
 import '../../../account/domain/entities/account.dart';
 import '../../../account/presentation/cubit/account_cubit.dart';
 import '../../../account/presentation/cubit/account_state.dart';
+import '../../../account/presentation/utils/account_presentation_extensions.dart';
 import '../../domain/entities/category.dart';
 import '../../domain/entities/transaction.dart';
 import '../cubit/transaction_cubit.dart';
 import '../cubit/transaction_state.dart';
 import '../widgets/delete_transaction_dialog.dart';
-import '../../../../core/utils/currency_formatter.dart';
 
 class TransactionDetailsScreen extends StatelessWidget {
   final String transactionId;
@@ -29,39 +31,6 @@ class TransactionDetailsScreen extends StatelessWidget {
 
   String _cleanNote(String note) {
     return note.replaceAll(RegExp(r'TargetAccount:[^\s]+'), '').trim();
-  }
-
-  IconData _getAccountIcon(String? iconName, AccountType type) {
-    if (iconName != null) {
-      switch (iconName) {
-        case 'wallet':
-          return Icons.account_balance_wallet;
-        case 'savings':
-          return Icons.savings_outlined;
-        case 'bank':
-          return Icons.account_balance;
-        case 'cash':
-          return Icons.money;
-        case 'card':
-          return Icons.credit_card;
-        case 'investment':
-          return Icons.trending_up;
-      }
-    }
-    switch (type) {
-      case AccountType.cash:
-        return Icons.money;
-      case AccountType.bank:
-        return Icons.account_balance;
-      case AccountType.savings:
-        return Icons.savings;
-      case AccountType.creditCard:
-        return Icons.credit_card;
-      case AccountType.wallet:
-        return Icons.account_balance_wallet;
-      case AccountType.business:
-        return Icons.business;
-    }
   }
 
   @override
@@ -97,21 +66,16 @@ class TransactionDetailsScreen extends StatelessWidget {
                     ? context.semanticColors.expense
                     : context.semanticColors.transfer);
 
-            // Fetch accounts
             final sourceAccount = accountState.accounts.where((a) => a.id == tx.accountId).firstOrNull;
             final sourceAccountName = sourceAccount?.name ?? tx.accountId;
-            final sourceAccountColor = sourceAccount?.colorHex != null
-                ? FinoraColorSchemes.parseHexColor(sourceAccount!.colorHex!)
-                : Theme.of(context).colorScheme.primary;
+            final sourceAccountColor = sourceAccount?.getThemeColor(context) ?? Theme.of(context).colorScheme.primary;
 
             final targetAccountId = _extractTargetAccountFromNote(tx.note);
             final targetAccount = targetAccountId != null
                 ? accountState.accounts.where((a) => a.id == targetAccountId).firstOrNull
                 : null;
             final targetAccountName = targetAccount?.name ?? targetAccountId ?? '';
-            final targetAccountColor = targetAccount?.colorHex != null
-                ? FinoraColorSchemes.parseHexColor(targetAccount!.colorHex!)
-                : Theme.of(context).colorScheme.primary;
+            final targetAccountColor = targetAccount?.getThemeColor(context) ?? Theme.of(context).colorScheme.primary;
 
             final cleanedNote = _cleanNote(tx.note);
             final showLastUpdated = tx.updatedAt.difference(tx.createdAt).inSeconds.abs() > 1;
@@ -183,134 +147,134 @@ class TransactionDetailsScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 24.0.h),
 
-                    // Property List
-                    ListTile(
-                      leading: const Icon(Icons.swap_horiz),
-                      title: const Text('Transaction Type'),
-                      subtitle: Text(tx.transactionType.name.toUpperCase()),
-                    ),
-                    const Divider(height: 1.0),
-                    ListTile(
-                      leading: const Icon(Icons.category),
-                      title: Text(l10n.categoryLabel),
-                      subtitle: Text(category.getLocalizedName(l10n)),
-                    ),
-                    const Divider(height: 1.0),
-
-                    if (isTransfer) ...[
-                      ListTile(
-                        leading: CircleAvatar(
-                          radius: 16.0.r,
-                          backgroundColor: sourceAccountColor.withValues(alpha: 0.15),
-                          child: Icon(
-                            _getAccountIcon(sourceAccount?.iconData, sourceAccount?.type ?? AccountType.cash),
-                            color: sourceAccountColor,
-                            size: 16.0.r,
-                          ),
-                        ),
-                        title: const Text('From Account'),
-                        subtitle: Text(
-                          sourceAccountName,
-                          style: TextStyle(
-                            color: sourceAccountColor,
-                            fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                        onTap: () {
-                          context.push('/accounts/details/${tx.accountId}');
-                        },
-                      ),
-                      const Divider(height: 1.0),
-                      if (targetAccountId != null) ...[
-                        ListTile(
-                          leading: CircleAvatar(
-                            radius: 16.0.r,
-                            backgroundColor: targetAccountColor.withValues(alpha: 0.15),
-                            child: Icon(
-                              _getAccountIcon(targetAccount?.iconData, targetAccount?.type ?? AccountType.cash),
-                              color: targetAccountColor,
-                              size: 16.0.r,
+                    // Property List (modernized without line Dividers)
+                    Card(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                        child: Column(
+                          children: [
+                            ListTile(
+                              leading: const Icon(Icons.swap_horiz),
+                              title: const Text('Transaction Type'),
+                              subtitle: Text(tx.transactionType.name.toUpperCase()),
                             ),
-                          ),
-                          title: const Text('To Account'),
-                          subtitle: Text(
-                            targetAccountName,
-                            style: TextStyle(
-                              color: targetAccountColor,
-                              fontWeight: FontWeight.bold,
-                              decoration: TextDecoration.underline,
+                            ListTile(
+                              leading: const Icon(Icons.category),
+                              title: Text(l10n.categoryLabel),
+                              subtitle: Text(category.getLocalizedName(l10n)),
                             ),
-                          ),
-                          onTap: () {
-                            context.push('/accounts/details/$targetAccountId');
-                          },
+
+                            if (isTransfer) ...[
+                              ListTile(
+                                leading: CircleAvatar(
+                                  radius: 16.0.r,
+                                  backgroundColor: sourceAccountColor.withValues(alpha: 0.15),
+                                  child: Icon(
+                                    sourceAccount?.icon ?? AccountType.cash.defaultIcon,
+                                    color: sourceAccountColor,
+                                    size: 16.0.r,
+                                  ),
+                                ),
+                                title: const Text('From Account'),
+                                subtitle: Text(
+                                  sourceAccountName,
+                                  style: TextStyle(
+                                    color: sourceAccountColor,
+                                    fontWeight: FontWeight.bold,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                                onTap: () {
+                                  context.push('/accounts/details/${tx.accountId}');
+                                },
+                              ),
+                              if (targetAccountId != null) ...[
+                                ListTile(
+                                  leading: CircleAvatar(
+                                    radius: 16.0.r,
+                                    backgroundColor: targetAccountColor.withValues(alpha: 0.15),
+                                    child: Icon(
+                                      targetAccount?.icon ?? AccountType.cash.defaultIcon,
+                                      color: targetAccountColor,
+                                      size: 16.0.r,
+                                    ),
+                                  ),
+                                  title: const Text('To Account'),
+                                  subtitle: Text(
+                                    targetAccountName,
+                                    style: TextStyle(
+                                      color: targetAccountColor,
+                                      fontWeight: FontWeight.bold,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    context.push('/accounts/details/$targetAccountId');
+                                  },
+                                ),
+                              ],
+                            ] else ...[
+                              ListTile(
+                                leading: CircleAvatar(
+                                  radius: 16.0.r,
+                                  backgroundColor: sourceAccountColor.withValues(alpha: 0.15),
+                                  child: Icon(
+                                    sourceAccount?.icon ?? AccountType.cash.defaultIcon,
+                                    color: sourceAccountColor,
+                                    size: 16.0.r,
+                                  ),
+                                ),
+                                title: const Text('Financial Account'),
+                                subtitle: Text(
+                                  sourceAccountName,
+                                  style: TextStyle(
+                                    color: sourceAccountColor,
+                                    fontWeight: FontWeight.bold,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                                onTap: () {
+                                  context.push('/accounts/details/${tx.accountId}');
+                                },
+                              ),
+                            ],
+
+                            ListTile(
+                              leading: const Icon(Icons.calendar_today),
+                              title: Text(l10n.dateLabel),
+                              subtitle: Text(DateFormat.yMMMMd().format(tx.transactionDate)),
+                            ),
+                            ListTile(
+                              leading: const Icon(Icons.access_time),
+                              title: const Text('Time'),
+                              subtitle: Text(DateFormat.jm().format(tx.transactionDate)),
+                            ),
+
+                            if (cleanedNote.isNotEmpty) ...[
+                              ListTile(
+                                leading: const Icon(Icons.note),
+                                title: Text(l10n.noteLabel),
+                                subtitle: Text(cleanedNote),
+                              ),
+                            ],
+
+                            ListTile(
+                              leading: const Icon(Icons.create),
+                              title: const Text('Created At'),
+                              subtitle: Text(DateFormat.yMMMd().add_jm().format(tx.createdAt)),
+                            ),
+
+                            if (showLastUpdated) ...[
+                              ListTile(
+                                leading: const Icon(Icons.update),
+                                title: const Text('Last Updated'),
+                                subtitle: Text(DateFormat.yMMMd().add_jm().format(tx.updatedAt)),
+                              ),
+                            ],
+                          ],
                         ),
-                        const Divider(height: 1.0),
-                      ],
-                    ] else ...[
-                      ListTile(
-                        leading: CircleAvatar(
-                          radius: 16.0.r,
-                          backgroundColor: sourceAccountColor.withValues(alpha: 0.15),
-                          child: Icon(
-                            _getAccountIcon(sourceAccount?.iconData, sourceAccount?.type ?? AccountType.cash),
-                            color: sourceAccountColor,
-                            size: 16.0.r,
-                          ),
-                        ),
-                        title: const Text('Financial Account'),
-                        subtitle: Text(
-                          sourceAccountName,
-                          style: TextStyle(
-                            color: sourceAccountColor,
-                            fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                        onTap: () {
-                          context.push('/accounts/details/${tx.accountId}');
-                        },
                       ),
-                      const Divider(height: 1.0),
-                    ],
-
-                    ListTile(
-                      leading: const Icon(Icons.calendar_today),
-                      title: Text(l10n.dateLabel),
-                      subtitle: Text(DateFormat.yMMMMd().format(tx.transactionDate)),
                     ),
-                    const Divider(height: 1.0),
-                    ListTile(
-                      leading: const Icon(Icons.access_time),
-                      title: const Text('Time'),
-                      subtitle: Text(DateFormat.jm().format(tx.transactionDate)),
-                    ),
-                    const Divider(height: 1.0),
-
-                    if (cleanedNote.isNotEmpty) ...[
-                      ListTile(
-                        leading: const Icon(Icons.note),
-                        title: Text(l10n.noteLabel),
-                        subtitle: Text(cleanedNote),
-                      ),
-                      const Divider(height: 1.0),
-                    ],
-
-                    ListTile(
-                      leading: const Icon(Icons.create),
-                      title: const Text('Created At'),
-                      subtitle: Text(DateFormat.yMMMd().add_jm().format(tx.createdAt)),
-                    ),
-
-                    if (showLastUpdated) ...[
-                      const Divider(height: 1.0),
-                      ListTile(
-                        leading: const Icon(Icons.update),
-                        title: const Text('Last Updated'),
-                        subtitle: Text(DateFormat.yMMMd().add_jm().format(tx.updatedAt)),
-                      ),
-                    ],
                   ],
                 ),
               ),

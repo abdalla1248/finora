@@ -1,23 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import '../../../../l10n/app_localizations.dart';
-import '../../../../shared/widgets/empty_state.dart';
-import '../../../../shared/widgets/error_state.dart';
+
 import '../../../../core/responsive/responsive_centered_view.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../../../shared/widgets/error_state.dart';
 import '../../../transaction/domain/entities/transaction.dart';
 import '../../../transaction/presentation/cubit/transaction_cubit.dart';
 import '../../../transaction/presentation/cubit/transaction_state.dart';
-import '../../../transaction/presentation/widgets/transaction_card.dart';
-import '../../../transaction/domain/entities/category.dart';
-import '../../domain/entities/account.dart';
-import '../../../../core/design_system/color_schemes.dart';
 import '../cubit/account_cubit.dart';
 import '../cubit/account_state.dart';
-import '../../../../core/utils/currency_formatter.dart';
-import '../../../../core/utils/l10n_extensions.dart';
+import '../widgets/account_analytics_tab.dart';
+import '../widgets/account_overview_tab.dart';
+import '../widgets/account_transactions_tab.dart';
 
 class AccountDetailsScreen extends StatelessWidget {
   final String accountId;
@@ -27,39 +23,6 @@ class AccountDetailsScreen extends StatelessWidget {
   String? _extractTargetAccountFromNote(String note) {
     final match = RegExp(r'TargetAccount:([^\s]+)').firstMatch(note);
     return match?.group(1);
-  }
-
-  IconData _getIcon(String? iconName, AccountType type) {
-    if (iconName != null) {
-      switch (iconName) {
-        case 'wallet':
-          return Icons.account_balance_wallet;
-        case 'savings':
-          return Icons.savings_outlined;
-        case 'bank':
-          return Icons.account_balance;
-        case 'cash':
-          return Icons.money;
-        case 'card':
-          return Icons.credit_card;
-        case 'investment':
-          return Icons.trending_up;
-      }
-    }
-    switch (type) {
-      case AccountType.cash:
-        return Icons.money;
-      case AccountType.bank:
-        return Icons.account_balance;
-      case AccountType.savings:
-        return Icons.savings;
-      case AccountType.creditCard:
-        return Icons.credit_card;
-      case AccountType.wallet:
-        return Icons.account_balance_wallet;
-      case AccountType.business:
-        return Icons.business;
-    }
   }
 
   @override
@@ -78,7 +41,6 @@ class AccountDetailsScreen extends StatelessWidget {
 
         return BlocBuilder<TransactionCubit, TransactionState>(
           builder: (context, txState) {
-            // Find all transactions that involve this account (either source or target of transfer)
             final accountTransactions = txState.allTransactions.where((t) {
               final isSource = t.accountId == accountId;
               final isTarget = t.transactionType == TransactionType.transfer &&
@@ -86,10 +48,8 @@ class AccountDetailsScreen extends StatelessWidget {
               return isSource || isTarget;
             }).toList();
 
-            // Sort transactions by date descending
             accountTransactions.sort((a, b) => b.transactionDate.compareTo(a.transactionDate));
 
-            // Calculate overview statistics
             double totalIncome = 0.0;
             double totalExpense = 0.0;
 
@@ -113,7 +73,7 @@ class AccountDetailsScreen extends StatelessWidget {
             final netBalance = totalIncome - totalExpense;
             final lastActivity = accountTransactions.isNotEmpty
                 ? DateFormat.yMMMd().add_jm().format(accountTransactions.first.transactionDate)
-                : l10n.noTransactionsFound; // fallback string
+                : l10n.noTransactionsFound;
 
             return DefaultTabController(
               length: 3,
@@ -137,31 +97,23 @@ class AccountDetailsScreen extends StatelessWidget {
                 body: ResponsiveCenteredView(
                   child: TabBarView(
                     children: [
-                      // Overview Tab
-                      _buildOverviewTab(
-                        context,
-                        account,
-                        totalIncome,
-                        totalExpense,
-                        netBalance,
-                        accountTransactions.length,
-                        lastActivity,
-                        l10n,
+                      AccountOverviewTab(
+                        account: account,
+                        totalIncome: totalIncome,
+                        totalExpense: totalExpense,
+                        netBalance: netBalance,
+                        txCount: accountTransactions.length,
+                        lastActivity: lastActivity,
                       ),
-                      // Transactions Tab
-                      _buildTransactionsTab(
-                        context,
-                        accountTransactions,
-                        l10n,
+                      AccountTransactionsTab(
+                        transactions: accountTransactions,
                       ),
-                      // Analytics Tab
-                      _buildAnalyticsTab(
-                        context,
-                        account,
-                        accountTransactions,
-                        totalIncome,
-                        totalExpense,
-                        l10n,
+                      AccountAnalyticsTab(
+                        accountId: accountId,
+                        account: account,
+                        transactions: accountTransactions,
+                        totalIncome: totalIncome,
+                        totalExpense: totalExpense,
                       ),
                     ],
                   ),
@@ -171,494 +123,6 @@ class AccountDetailsScreen extends StatelessWidget {
           },
         );
       },
-    );
-  }
-
-  Widget _buildOverviewTab(
-    BuildContext context,
-    dynamic account,
-    double totalIncome,
-    double totalExpense,
-    double netBalance,
-    int txCount,
-    String lastActivity,
-    AppLocalizations l10n,
-  ) {
-    final currency = account.currencyCode;
-    final accountColor = account.colorHex != null
-        ? FinoraColorSchemes.parseHexColor(account.colorHex!)
-        : Theme.of(context).colorScheme.primary;
-
-    return ListView(
-      padding: EdgeInsets.all(16.0.r),
-      children: [
-        Card(
-          color: accountColor.withValues(alpha: 0.1),
-          child: Padding(
-            padding: EdgeInsets.all(20.0.r),
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 28.0.r,
-                  backgroundColor: accountColor.withValues(alpha: 0.15),
-                  child: Icon(
-                    _getIcon(account.iconData, account.type),
-                    color: accountColor,
-                    size: 28.0.r,
-                  ),
-                ),
-                SizedBox(height: 12.0.h),
-                Text(
-                  l10n.currentBalanceLabel,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
-                        fontSize: 14.0.sp,
-                      ),
-                ),
-                SizedBox(height: 8.0.h),
-                Text(
-                  formatCurrency(account.balance, currency, context),
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 32.0.sp,
-                        color: accountColor,
-                      ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: 16.0.h),
-        Row(
-          children: [
-            Expanded(
-              child: Card(
-                child: Padding(
-                  padding: EdgeInsets.all(16.0.r),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.arrow_downward, color: const Color(0xFF10B981), size: 18.0.r),
-                          SizedBox(width: 4.0.w),
-                          Text(l10n.incomeLabel, style: TextStyle(fontSize: 12.0.sp)),
-                        ],
-                      ),
-                      SizedBox(height: 8.0.h),
-                      Text(
-                        formatCurrency(totalIncome, currency, context),
-                        style: TextStyle(
-                          fontSize: 16.0.sp,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF10B981),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(width: 12.0.w),
-            Expanded(
-              child: Card(
-                child: Padding(
-                  padding: EdgeInsets.all(16.0.r),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.arrow_upward, color: Theme.of(context).colorScheme.error, size: 18.0.r),
-                          SizedBox(width: 4.0.w),
-                          Text(l10n.expensesLabel, style: TextStyle(fontSize: 12.0.sp)),
-                        ],
-                      ),
-                      SizedBox(height: 8.0.h),
-                      Text(
-                        formatCurrency(totalExpense, currency, context),
-                        style: TextStyle(
-                          fontSize: 16.0.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 16.0.h),
-        Card(
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.0.h),
-            child: Column(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.compare_arrows),
-                  title: Text(l10n.netCashFlowLabel),
-                  trailing: Text(
-                    formatCurrency(netBalance, currency, context),
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14.0.sp,
-                      color: netBalance >= 0 ? const Color(0xFF10B981) : Theme.of(context).colorScheme.error,
-                    ),
-                  ),
-                ),
-                const Divider(height: 1.0),
-                ListTile(
-                  leading: const Icon(Icons.tag),
-                  title: Text(l10n.totalTransactionsLabel),
-                  trailing: Text(
-                    '$txCount',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0.sp),
-                  ),
-                ),
-                const Divider(height: 1.0),
-                ListTile(
-                  leading: const Icon(Icons.calendar_today),
-                  title: Text(l10n.creationDateLabel),
-                  trailing: Text(
-                    DateFormat.yMMMd().format(account.createdAt),
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0.sp),
-                  ),
-                ),
-                const Divider(height: 1.0),
-                ListTile(
-                  leading: const Icon(Icons.history),
-                  title: Text(l10n.lastActivityLabel),
-                  trailing: Text(
-                    lastActivity,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.0.sp),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTransactionsTab(
-    BuildContext context,
-    List<Transaction> transactions,
-    AppLocalizations l10n,
-  ) {
-    if (transactions.isEmpty) {
-      return EmptyState(
-        title: l10n.noTransactionsFound,
-        description: l10n.dashboardEmptyDesc,
-        icon: Icons.receipt_long_outlined,
-      );
-    }
-
-    return ListView.builder(
-      padding: EdgeInsets.all(16.0.r),
-      itemCount: transactions.length,
-      itemBuilder: (context, index) {
-        final tx = transactions[index];
-        return TransactionCard(
-          transaction: tx,
-          onTap: () {
-            context.push('/transactions/details/${tx.id}');
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildAnalyticsTab(
-    BuildContext context,
-    Account account,
-    List<Transaction> transactions,
-    double totalIncome,
-    double totalExpense,
-    AppLocalizations l10n,
-  ) {
-    if (transactions.isEmpty) {
-      return EmptyState(
-        title: l10n.noTransactionsFound,
-        description: l10n.dashboardEmptyDesc,
-        icon: Icons.analytics_outlined,
-      );
-    }
-
-    // Calculations for the new stats
-    final now = DateTime.now();
-    final monthlySpending = transactions.where((t) {
-      final isSource = t.accountId == accountId;
-      final isExpense = t.transactionType == TransactionType.expense ||
-          t.transactionType == TransactionType.transfer;
-      final isThisMonth = t.transactionDate.year == now.year &&
-          t.transactionDate.month == now.month;
-      return isSource && isExpense && isThisMonth;
-    }).fold(0.0, (sum, t) => sum + t.amount);
-
-    final totalExpensesAllTime = transactions.where((t) {
-      final isSource = t.accountId == accountId;
-      final isExpense = t.transactionType == TransactionType.expense ||
-          t.transactionType == TransactionType.transfer;
-      return isSource && isExpense;
-    }).fold(0.0, (sum, t) => sum + t.amount);
-
-    final activeDays = now.difference(account.createdAt).inDays;
-    final days = activeDays <= 0 ? 1 : activeDays;
-    final averageDailySpending = totalExpensesAllTime / days;
-
-    final largestTx = transactions.isEmpty
-        ? null
-        : transactions.reduce((a, b) => a.amount > b.amount ? a : b);
-
-    // Group expenses by category
-    final categoryTotals = <String, double>{};
-    double totalCategoryExpenses = 0.0;
-
-    for (final t in transactions) {
-      final isSource = t.accountId == accountId;
-      if (isSource && (t.transactionType == TransactionType.expense || t.transactionType == TransactionType.transfer)) {
-        final categoryId = t.categoryId;
-        categoryTotals[categoryId] = (categoryTotals[categoryId] ?? 0.0) + t.amount;
-        totalCategoryExpenses += t.amount;
-      }
-    }
-
-    final sortedCategories = categoryTotals.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
-
-    final incomeExpenseTotal = totalIncome + totalExpense;
-    final incomeRatio = incomeExpenseTotal > 0 ? totalIncome / incomeExpenseTotal : 0.5;
-    final expenseRatio = incomeExpenseTotal > 0 ? totalExpense / incomeExpenseTotal : 0.5;
-
-    return ListView(
-      padding: EdgeInsets.all(16.0.r),
-      children: [
-        // Stats grid
-        Row(
-          children: [
-            Expanded(
-              child: Card(
-                child: Padding(
-                  padding: EdgeInsets.all(12.0.r),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.monthlySpendLabel,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 11.0.sp),
-                      ),
-                      SizedBox(height: 4.0.h),
-                      Text(
-                        formatCurrency(monthlySpending, account.currencyCode, context),
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14.0.sp,
-                              color: Theme.of(context).colorScheme.error,
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(width: 8.0.w),
-            Expanded(
-              child: Card(
-                child: Padding(
-                  padding: EdgeInsets.all(12.0.r),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.dailyAvgSpendLabel,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 11.0.sp),
-                      ),
-                      SizedBox(height: 4.0.h),
-                      Text(
-                        formatCurrency(averageDailySpending, account.currencyCode, context),
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14.0.sp,
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(width: 8.0.w),
-            Expanded(
-              child: Card(
-                child: Padding(
-                  padding: EdgeInsets.all(12.0.r),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.largestTxLabel,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 11.0.sp),
-                      ),
-                      SizedBox(height: 4.0.h),
-                      Text(
-                        largestTx != null
-                            ? formatCurrency(largestTx.amount, largestTx.currencyCode, context)
-                            : 'N/A',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14.0.sp,
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 16.0.h),
-        // Income vs Expense Ratio Card
-        Card(
-          child: Padding(
-            padding: EdgeInsets.all(16.0.r),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.cashFlowBreakdownLabel,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 16.0.sp),
-                ),
-                SizedBox(height: 16.0.h),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: (incomeRatio * 100).round().clamp(1, 99),
-                      child: Container(
-                        height: 8.0.h,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF10B981),
-                          borderRadius: BorderRadius.horizontal(
-                            left: const Radius.circular(4.0),
-                            right: Radius.circular(expenseRatio == 0 ? 4.0 : 0.0),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: (expenseRatio * 100).round().clamp(1, 99),
-                      child: Container(
-                        height: 8.0.h,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.error,
-                          borderRadius: BorderRadius.horizontal(
-                            right: const Radius.circular(4.0),
-                            left: Radius.circular(incomeRatio == 0 ? 4.0 : 0.0),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 12.0.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Container(width: 8.0.w, height: 8.0.h, color: const Color(0xFF10B981)),
-                        SizedBox(width: 4.0.w),
-                        Text(
-                          '${l10n.incomeLabel}: ${(incomeRatio * 100).toStringAsFixed(0)}%',
-                          style: TextStyle(fontSize: 12.0.sp),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Container(width: 8.0.w, height: 8.0.h, color: Theme.of(context).colorScheme.error),
-                        SizedBox(width: 4.0.w),
-                        Text(
-                          '${l10n.expensesLabel}: ${(expenseRatio * 100).toStringAsFixed(0)}%',
-                          style: TextStyle(fontSize: 12.0.sp),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: 16.0.h),
-
-        // Expense by Category Section
-        Text(
-          l10n.expensesByCategoryLabel,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 16.0.sp),
-        ),
-        SizedBox(height: 8.0.h),
-        if (sortedCategories.isEmpty)
-          Card(
-            child: Padding(
-              padding: EdgeInsets.all(16.0.r),
-              child: Center(
-                child: Text(
-                  l10n.noExpenseRecordsLabel,
-                  style: TextStyle(color: Theme.of(context).colorScheme.outline, fontSize: 14.0.sp),
-                ),
-              ),
-            ),
-          )
-        else
-          Card(
-            child: ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.all(8.0.r),
-              itemCount: sortedCategories.length,
-              separatorBuilder: (context, index) => const Divider(height: 1.0),
-              itemBuilder: (context, index) {
-                final entry = sortedCategories[index];
-                final category = CategoryRegistry.getCategoryById(entry.key);
-                final localizedName = category.getLocalizedName(l10n);
-                final catExpenseRatio = totalCategoryExpenses > 0 ? entry.value / totalCategoryExpenses : 0.0;
-
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: category.color.withValues(alpha: 0.15),
-                    child: Icon(category.icon, color: category.color, size: 20.0.r),
-                  ),
-                  title: Text(localizedName, style: TextStyle(fontSize: 14.0.sp)),
-                  subtitle: ClipRRect(
-                    borderRadius: BorderRadius.circular(2.0),
-                    child: LinearProgressIndicator(
-                      value: catExpenseRatio,
-                      minHeight: 4.0.h,
-                      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-                      valueColor: AlwaysStoppedAnimation<Color>(category.color),
-                    ),
-                  ),
-                  trailing: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        '${(catExpenseRatio * 100).toStringAsFixed(0)}%',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0.sp),
-                      ),
-                      Text(
-                        entry.value.toStringAsFixed(2),
-                        style: TextStyle(color: Theme.of(context).colorScheme.outline, fontSize: 11.0.sp),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-      ],
     );
   }
 }
