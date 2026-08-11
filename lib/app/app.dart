@@ -66,15 +66,21 @@ class FinoraApp extends StatelessWidget {
         scrolledUnderElevation: 1.0,
       ),
       cardTheme: CardThemeData(
-        elevation: 1.0,
+        color: colorScheme.surfaceContainer,
+        elevation: 2.0,
+        shadowColor: colorScheme.shadow.withValues(alpha: 0.08),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(FinoraTokens.borderRadiusMedium),
+          side: BorderSide(
+            color: colorScheme.outline.withValues(alpha: 0.12),
+            width: 1.0,
+          ),
         ),
         clipBehavior: Clip.antiAlias,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.15),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(FinoraTokens.borderRadiusMedium),
@@ -88,10 +94,24 @@ class FinoraApp extends StatelessWidget {
           borderRadius: BorderRadius.circular(FinoraTokens.borderRadiusMedium),
           borderSide: BorderSide(color: colorScheme.primary, width: 2.0),
         ),
+        labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+        hintStyle: TextStyle(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7)),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
+          backgroundColor: colorScheme.surfaceContainerLow,
+          foregroundColor: colorScheme.primary,
           elevation: 1.0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(FinoraTokens.borderRadiusMedium),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+        ),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(FinoraTokens.borderRadiusMedium),
           ),
@@ -100,6 +120,8 @@ class FinoraApp extends StatelessWidget {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
+          foregroundColor: colorScheme.primary,
+          side: BorderSide(color: colorScheme.outline),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(FinoraTokens.borderRadiusMedium),
           ),
@@ -108,24 +130,75 @@ class FinoraApp extends StatelessWidget {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
+          foregroundColor: colorScheme.primary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(FinoraTokens.borderRadiusSmall),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         ),
       ),
-      dialogTheme: DialogThemeData(
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
+        elevation: 3.0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(FinoraTokens.borderRadiusLarge),
+          borderRadius: BorderRadius.circular(FinoraTokens.borderRadiusMedium),
         ),
       ),
-      bottomSheetTheme: const BottomSheetThemeData(
-        shape: RoundedRectangleBorder(
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          foregroundColor: colorScheme.primary,
+        ),
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: colorScheme.surface,
+        indicatorColor: colorScheme.primaryContainer,
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return IconThemeData(color: colorScheme.onPrimaryContainer);
+          }
+          return IconThemeData(color: colorScheme.onSurfaceVariant);
+        }),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return TextStyle(
+               color: colorScheme.onSurface,
+               fontWeight: FontWeight.bold,
+               fontSize: 12,
+            );
+          }
+          return TextStyle(
+            color: colorScheme.onSurfaceVariant,
+            fontSize: 12,
+          );
+        }),
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: colorScheme.surfaceContainer,
+        modalBackgroundColor: colorScheme.surfaceContainer,
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(FinoraTokens.borderRadiusLarge),
           ),
         ),
         clipBehavior: Clip.antiAlias,
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: colorScheme.surfaceContainer,
+        elevation: 6.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(FinoraTokens.borderRadiusLarge),
+        ),
+        titleTextStyle: TextStyle(
+          color: colorScheme.onSurface,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+        contentTextStyle: TextStyle(
+          color: colorScheme.onSurfaceVariant,
+          fontSize: 16,
+        ),
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
@@ -133,9 +206,82 @@ class FinoraApp extends StatelessWidget {
           borderRadius: BorderRadius.circular(FinoraTokens.borderRadiusSmall),
         ),
       ),
-      navigationBarTheme: NavigationBarThemeData(
-        indicatorColor: colorScheme.primaryContainer,
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+      chipTheme: ChipThemeData(
+        backgroundColor: colorScheme.surfaceContainer,
+        disabledColor: colorScheme.onSurface.withValues(alpha: 0.08),
+        selectedColor: colorScheme.primaryContainer,
+        secondarySelectedColor: colorScheme.primaryContainer,
+        labelStyle: TextStyle(color: colorScheme.onSurface),
+        secondaryLabelStyle: TextStyle(color: colorScheme.onPrimaryContainer),
+        brightness: colorScheme.brightness,
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(FinoraTokens.borderRadiusSmall),
+          side: BorderSide(
+            color: colorScheme.outline.withValues(alpha: 0.2),
+            width: 1.0,
+          ),
+        ),
+      ),
+      listTileTheme: ListTileThemeData(
+        textColor: colorScheme.onSurface,
+        iconColor: colorScheme.onSurfaceVariant,
+        selectedColor: colorScheme.primary,
+        selectedTileColor: colorScheme.primaryContainer.withValues(alpha: 0.15),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(FinoraTokens.borderRadiusMedium),
+        ),
+      ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return colorScheme.onPrimary;
+          }
+          return colorScheme.outline;
+        }),
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return colorScheme.primary;
+          }
+          return colorScheme.surfaceContainerHighest;
+        }),
+      ),
+      checkboxTheme: CheckboxThemeData(
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return colorScheme.primary;
+          }
+          return Colors.transparent;
+        }),
+        checkColor: WidgetStateProperty.all(colorScheme.onPrimary),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4),
+        ),
+      ),
+      radioTheme: RadioThemeData(
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return colorScheme.primary;
+          }
+          return colorScheme.onSurfaceVariant;
+        }),
+      ),
+      sliderTheme: SliderThemeData(
+        activeTrackColor: colorScheme.primary,
+        inactiveTrackColor: colorScheme.primaryContainer.withValues(alpha: 0.24),
+        thumbColor: colorScheme.primary,
+        overlayColor: colorScheme.primary.withValues(alpha: 0.12),
+      ),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: colorScheme.primary,
+        linearTrackColor: colorScheme.primaryContainer.withValues(alpha: 0.2),
+        circularTrackColor: colorScheme.primaryContainer.withValues(alpha: 0.2),
+      ),
+      dividerTheme: DividerThemeData(
+        color: colorScheme.outline.withValues(alpha: 0.2),
+        space: 1.0,
+        thickness: 1.0,
       ),
     );
   }

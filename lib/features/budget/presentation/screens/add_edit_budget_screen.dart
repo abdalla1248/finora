@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../l10n/app_localizations.dart';
+
 import '../../../../core/responsive/responsive_centered_view.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../transaction/domain/entities/category.dart';
 import '../../../transaction/domain/entities/transaction.dart';
 import '../../../user/presentation/cubit/user_cubit.dart';
@@ -173,7 +174,8 @@ class _AddEditBudgetScreenState extends State<AddEditBudgetScreen> {
                           final now = DateTime.now();
 
                           final budget = Budget(
-                            id: widget.initialBudget?.id ??
+                            id:
+                                widget.initialBudget?.id ??
                                 now.millisecondsSinceEpoch.toString(),
                             name: _nameController.text.trim(),
                             categoryId: _selectedCategoryId,
@@ -187,10 +189,17 @@ class _AddEditBudgetScreenState extends State<AddEditBudgetScreen> {
                           );
 
                           // Check if a budget already exists for this category (excluding the one being edited)
-                          final existingBudgets = context.read<BudgetCubit>().state.budgets;
-                          final duplicate = existingBudgets.where(
-                            (b) => b.categoryId == _selectedCategoryId && b.id != widget.initialBudget?.id,
-                          ).firstOrNull;
+                          final existingBudgets = context
+                              .read<BudgetCubit>()
+                              .state
+                              .budgets;
+                          final duplicate = existingBudgets
+                              .where(
+                                (b) =>
+                                    b.categoryId == _selectedCategoryId &&
+                                    b.id != widget.initialBudget?.id,
+                              )
+                              .firstOrNull;
 
                           if (duplicate != null) {
                             // Show warning dialog with options
@@ -201,26 +210,36 @@ class _AddEditBudgetScreenState extends State<AddEditBudgetScreen> {
                                 content: Text(l10n.duplicateBudgetMessage),
                                 actions: [
                                   TextButton(
-                                    onPressed: () => Navigator.of(dialogContext).pop('cancel'),
+                                    onPressed: () => Navigator.of(
+                                      dialogContext,
+                                    ).pop('cancel'),
                                     child: Text(l10n.cancelButton),
                                   ),
                                   TextButton(
-                                    onPressed: () => Navigator.of(dialogContext).pop('replace'),
+                                    onPressed: () => Navigator.of(
+                                      dialogContext,
+                                    ).pop('replace'),
                                     child: Text(l10n.btnUpdateBudget),
                                   ),
                                   TextButton(
-                                    onPressed: () => Navigator.of(dialogContext).pop('increase'),
+                                    onPressed: () => Navigator.of(
+                                      dialogContext,
+                                    ).pop('increase'),
                                     child: Text(l10n.btnIncreaseBudget),
                                   ),
                                   TextButton(
-                                    onPressed: () => Navigator.of(dialogContext).pop('decrease'),
+                                    onPressed: () => Navigator.of(
+                                      dialogContext,
+                                    ).pop('decrease'),
                                     child: Text(l10n.btnDecreaseBudget),
                                   ),
                                 ],
                               ),
                             );
 
-                            if (choice == null || choice == 'cancel' || !context.mounted) {
+                            if (choice == null ||
+                                choice == 'cancel' ||
+                                !context.mounted) {
                               return;
                             }
 
@@ -237,17 +256,26 @@ class _AddEditBudgetScreenState extends State<AddEditBudgetScreen> {
                               );
                             } else {
                               updatedBudget = duplicate.copyWith(
-                                amount: (duplicate.amount - amount).clamp(0.0, double.infinity),
+                                amount: (duplicate.amount - amount).clamp(
+                                  0.0,
+                                  double.infinity,
+                                ),
                                 updatedAt: DateTime.now(),
                               );
                             }
 
-                            await context.read<BudgetCubit>().updateBudget(updatedBudget);
+                            await context.read<BudgetCubit>().updateBudget(
+                              updatedBudget,
+                            );
                           } else {
                             if (isEditing) {
-                              await context.read<BudgetCubit>().updateBudget(budget);
+                              await context.read<BudgetCubit>().updateBudget(
+                                budget,
+                              );
                             } else {
-                              await context.read<BudgetCubit>().addBudget(budget);
+                              await context.read<BudgetCubit>().addBudget(
+                                budget,
+                              );
                             }
                           }
 
@@ -257,6 +285,13 @@ class _AddEditBudgetScreenState extends State<AddEditBudgetScreen> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
+                        foregroundColor: Theme.of(
+                          context,
+                        ).colorScheme.onPrimaryContainer,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer,
+
                         padding: EdgeInsets.symmetric(vertical: 16.0.h),
                       ),
                       child: Text(l10n.saveButton),

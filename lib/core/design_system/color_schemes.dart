@@ -27,10 +27,16 @@ class FinoraColorSchemes {
     brightness: Brightness.light,
     primary: primaryBlue,
     onPrimary: Colors.white,
+    primaryContainer: Color(0xFFE2F1F8),
+    onPrimaryContainer: Color(0xFF0A2532),
     secondary: Color(0xFF475569),
     onSecondary: Colors.white,
+    secondaryContainer: Color(0xFFF1F5F9),
+    onSecondaryContainer: Color(0xFF0F172A),
     error: expenseRed,
     onError: Colors.white,
+    errorContainer: Color(0xFFFEE2E2),
+    onErrorContainer: Color(0xFF7F1D1D),
     card: backgroundLight,
     surface: backgroundLight,
     onSurface: Color(0xFF0F172A),
@@ -42,19 +48,37 @@ class FinoraColorSchemes {
 
   static const ColorScheme dark = ColorScheme(
     brightness: Brightness.dark,
-    primary: Color(0xFF38BDF8),
-    onPrimary: Color(0xFF0F172A),
-    secondary: Color(0xFF94A3B8),
-    onSecondary: Color(0xFF0F172A),
-    error: Color(0xFFF87171),
-    onError: Color(0xFF7F1D1D),
-    card: primaryBlue,
-    surface: Colors.black,
+
+    // Brand Colors
+    primary: Color(0xFF4FC3F7),
+    onPrimary: Color(0xFF082032),
+    primaryContainer: Color(0xFF0B4A6F),
+    onPrimaryContainer: Color(0xFFE0F7FA),
+
+    secondary: Color(0xFFA5B4C3),
+    onSecondary: Color(0xFF111827),
+    secondaryContainer: Color(0xFF2E3E52),
+    onSecondaryContainer: Color(0xFFE2E8F0),
+
+    // Error
+    error: Color(0xFFFF6B6B),
+    onError: Color(0xFF2B0B0B),
+    errorContainer: Color(0xFF5E1717),
+    onErrorContainer: Color(0xFFFFD8D8),
+
+    // Background & Surface
+    surface: Color(0xFF151A21), // بدل الأسود
     onSurface: Color(0xFFF8FAFC),
-    surfaceContainer: backgroundDark,
-    surfaceContainerHighest: surfaceDark,
-    onSurfaceVariant: Color(0xFF94A3B8),
-    outline: Color(0xFF475569),
+
+    surfaceContainer: Color(0xFF1E2630), // الكروت
+    surfaceContainerHighest: Color(0xFF2A3441),
+
+    onSurfaceVariant: Color(0xFFCBD5E1),
+
+    outline: Color(0xFF64748B),
+
+    // لو عندك Extension للكارد
+    card: Color(0xFF1E2630),
   );
 }
 

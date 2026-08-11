@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import '../../../../l10n/app_localizations.dart';
+
 import '../../../../core/responsive/responsive_centered_view.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/savings_goal.dart';
 import '../cubit/savings_goal_cubit.dart';
 
@@ -70,7 +71,9 @@ class _AddEditGoalScreenState extends State<AddEditGoalScreen> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Delete Savings Goal'),
-        content: const Text('Are you sure you want to delete this savings goal? This action cannot be undone.'),
+        content: const Text(
+          'Are you sure you want to delete this savings goal? This action cannot be undone.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
@@ -194,7 +197,9 @@ class _AddEditGoalScreenState extends State<AddEditGoalScreen> {
                         _targetAmountController.text.trim(),
                       );
                       final current =
-                          double.tryParse(_currentAmountController.text.trim()) ??
+                          double.tryParse(
+                            _currentAmountController.text.trim(),
+                          ) ??
                           0.0;
                       final now = DateTime.now();
 
